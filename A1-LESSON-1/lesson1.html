@@ -1,0 +1,1973 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartClass - Lesson 1 - My Personal World</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&display=swap');
+
+        :root {
+            --navy-tech: #1A1F36;
+            --electric-mint: #2CE6B8;
+            --sun-coral: #F85F73;
+            --blanco-nitido: #F9FAFC;
+            --gris-suave: #E5E7EB;
+            --gris-medio: #D1D5DB;
+            --gris-oscuro: #6B7280;
+            --verde-exito: #10B981; 
+            --verde-exito-oscuro: #059669; 
+            --rojo-error: #EF4444;
+            --amarillo-info: #F59E0B;
+            --azul-claro-fondo: #EFF6FF;
+            --texto-principal: #1F2937;
+            --texto-secundario: #4B5563;
+            
+            --font-principal-fallback: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+            --font-principal: 'Outfit', var(--font-principal-fallback);
+            --font-titulos: 'Montserrat', var(--font-principal-fallback);
+
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            
+            --sidebar-width-desktop: 300px;
+            --header-height: 70px; 
+        }
+
+        /* Animaciones (sin cambios) */
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes pulseFeedback { 0% { transform: scale(1); } 50% { transform: scale(1.03); } 100% { transform: scale(1); } }
+        @keyframes tada { 0% {transform: scale(1);} 10%, 20% {transform: scale(0.9) rotate(-3deg);} 30%, 50%, 70%, 90% {transform: scale(1.1) rotate(3deg);} 40%, 60%, 80% {transform: scale(1.1) rotate(-3deg);} 100% {transform: scale(1) rotate(0);} }
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(248, 95, 115, 0.6); } 70% { box-shadow: 0 0 0 12px rgba(248, 95, 115, 0); } 100% { box-shadow: 0 0 0 0 rgba(248, 95, 115, 0); } }
+        @keyframes modal-pop { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+
+
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: var(--font-principal);
+            margin: 0;
+            background-color: var(--blanco-nitido);
+            color: var(--texto-principal);
+            line-height: 1.7;
+            display: flex; 
+            flex-direction: column; 
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            padding-top: var(--header-height);
+        }
+
+        header {
+            background-color: var(--navy-tech);
+            color: var(--blanco-nitido);
+            padding: 0 25px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between; 
+            height: var(--header-height);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1002;
+            box-shadow: var(--shadow-md);
+        }
+        .logo { font-family: var(--font-titulos); font-size: 1.8em; font-weight: 700; letter-spacing: 0.5px; display: flex; align-items: center; }
+        .logo .icon { font-size: 0.9em; margin-right: 8px; color: var(--electric-mint); }
+        .mobile-menu-toggle { display: none; font-size: 1.8em; color: var(--blanco-nitido); background: none; border: none; cursor: pointer; padding: 10px; }
+
+        .main-wrapper { display: flex; flex-grow: 1; }
+
+        .sidebar {
+            width: var(--sidebar-width-desktop);
+            background-color: #f8f9fa;
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid var(--gris-suave);
+            flex-shrink: 0;
+            position: sticky; 
+            top: var(--header-height);
+            height: calc(100vh - var(--header-height));
+        }
+        .sidebar-header-info { padding: 20px; border-bottom: 1px solid var(--gris-suave); flex-shrink: 0; }
+        .sidebar-header-info h1.lesson-title-sidebar { font-family: var(--font-titulos); font-size: 1.3em; color: var(--navy-tech); margin: 0 0 10px 0; font-weight: 600; line-height: 1.3; }
+        
+        .progress-bar-wrapper { display: flex; align-items: center; gap: 10px; }
+        .progress-bar-container-sidebar { flex-grow: 1; background-color: var(--gris-medio); border-radius: 15px; margin-bottom: 0; height: 20px; position: relative; overflow: hidden; }
+        .progress-bar-sidebar { width: 0%; height: 100%; background-color: var(--verde-exito); border-radius: 15px; transition: width 0.7s cubic-bezier(0.25, 0.1, 0.25, 1); }
+        .progress-percentage-text { font-size: 0.9em; font-weight: 600; color: var(--verde-exito-oscuro); min-width: 40px; text-align: right; }
+
+        .sidebar-menu-container { padding: 15px; overflow-y: auto; flex-grow: 1; }
+        .sidebar-menu-container h3 { font-family: var(--font-titulos); color: var(--gris-oscuro); font-size: 0.9em; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 0; margin-bottom: 10px; padding-bottom: 5px; border-bottom: 1px solid var(--gris-medio); display: flex; align-items: center; }
+        .sidebar-menu-container h3 .icon { font-size: 1.1em; color: var(--navy-tech); margin-right: 8px; }
+        #lessonSectionsMenu { list-style: none; padding: 0; margin: 0; }
+        #lessonSectionsMenu li a { display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; text-decoration: none; color: var(--texto-secundario); border-radius: 6px; margin-bottom: 4px; transition: background-color 0.2s ease, color 0.2s ease, transform 0.1s ease; font-weight: 500; font-size: 0.9em; }
+        #lessonSectionsMenu li a .menu-item-text { display: flex; align-items: center; flex-grow: 1; }
+        #lessonSectionsMenu li a .menu-icon { margin-right: 10px; font-size: 1.1em; color: var(--gris-oscuro); width: 20px; text-align: center; transition: color 0.2s ease; }
+        #lessonSectionsMenu li a .completed-check { font-size: 1.1em; color: var(--verde-exito-oscuro); margin-left: 8px; font-weight: bold; opacity: 0; transition: opacity 0.3s ease; }
+        #lessonSectionsMenu li a.step-completed .completed-check { opacity: 1; }
+        #lessonSectionsMenu li a:hover { background-color: var(--gris-suave); color: var(--navy-tech); }
+        #lessonSectionsMenu li a:hover .menu-icon { color: var(--navy-tech); }
+        #lessonSectionsMenu li a.active { background-color: var(--electric-mint); color: var(--navy-tech) !important; font-weight: 600; box-shadow: var(--shadow-sm); }
+        #lessonSectionsMenu li a.active .menu-icon { color: var(--navy-tech); }
+        #lessonSectionsMenu li a.active.step-completed .completed-check { color: var(--navy-tech); }
+
+
+        .content-area { flex-grow: 1; padding: 30px; }
+        h2 { font-family: var(--font-titulos); margin-top: 0; margin-bottom: 25px; border-bottom: 3px solid var(--electric-mint); padding-bottom: 10px; font-size: 1.8em; color: var(--navy-tech); display: flex; align-items: center; font-weight: 600; }
+        .content-area > .lesson-step:first-of-type > h2 { margin-top: 0; } 
+        .lesson-step { background-color: #fff; padding: 25px; margin-bottom: 35px; border-radius: 12px; border: 1px solid var(--gris-suave); box-shadow: var(--shadow-md); animation: fadeIn 0.5s ease-out forwards; opacity: 0; }
+        .lesson-step p { color: var(--texto-secundario); font-size: 1.05em; margin-bottom: 15px; font-weight: 400; }
+        .lesson-step ul { list-style: none; padding-left: 0; }
+        
+        .lesson-step ul.grammar-list li { background-color: var(--azul-claro-fondo); padding: 10px 15px; margin-bottom: 8px; border-radius: 6px; border-left: 4px solid var(--electric-mint); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; }
+        .lesson-step ul.grammar-list li .text-content { flex-grow: 1; margin-right: 10px; }
+         .lesson-step ul.grammar-list li .text-content .term-translation { display: block; margin-bottom: 3px; }
+         .lesson-step ul.grammar-list li .text-content .pronoun,
+         .lesson-step ul.grammar-list li .text-content .adjective { font-weight: 600; font-size: 1.05em; }
+        .lesson-step ul.grammar-list li .text-content .pronoun { color: var(--sun-coral); } 
+        .lesson-step ul.grammar-list li .text-content .adjective { color: var(--electric-mint); } 
+        .lesson-step ul.grammar-list li .text-content .translation-grammar { font-size: 0.9em; color: var(--texto-secundario); margin-left: 5px; }
+        .lesson-step ul.grammar-list li .text-content .example-sentence { font-style: italic; color: var(--texto-secundario); font-size: 0.95em; display: block; margin-top: 2px; }
+        .lesson-step ul.grammar-list li button, 
+        .vocab-list-item button { 
+            padding: 5px 8px; font-size: 0.75em; margin-left: 0;
+            background-color: var(--gris-suave); color: var(--texto-secundario);
+            flex-shrink: 0; min-width: auto;
+        }
+        .lesson-step ul.grammar-list li button:hover, 
+        .vocab-list-item button:hover { background-color: var(--gris-medio); color: var(--navy-tech); }
+        .lesson-step ul.grammar-list li button .icon, 
+        .vocab-list-item button .icon { font-size: 1.2em; margin-right: 3px; }
+
+        .living-english-tip { background-color: #fff9eb; border: 1px solid #ffe7ba; border-left: 5px solid var(--amarillo-info); padding: 15px 20px; margin: 25px 0; border-radius: 8px; font-size: 0.98em; line-height: 1.6; box-shadow: var(--shadow-sm); }
+        .living-english-tip strong { color: #b45309; font-weight: 600; display: block; margin-bottom: 5px; }
+        .living-english-tip .icon { color: var(--amarillo-info); font-size: 1.2em; margin-right: 8px; vertical-align: -2px; }
+
+        .phrase-block { background-color: var(--blanco-nitido); border: 1px solid var(--gris-medio); padding: 18px 22px; margin-bottom: 15px; border-radius: 10px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; transition: box-shadow 0.3s ease; }
+        .phrase-block:hover { box-shadow: var(--shadow-sm); }
+        .phrase-text { font-size: 1.35em; margin-bottom: 10px; flex-basis: 100%; color: var(--texto-principal); font-weight: 500; }
+        .phrase-text span.highlight { background-color: #D6EEFF; padding: 0.2em 0.5em; border-radius: 6px; cursor: pointer; transition: background-color 0.2s, color 0.2s, transform 0.2s; margin: 0 3px; display: inline-block; }
+        .phrase-text span.highlight:hover { background-color: var(--electric-mint); color: var(--navy-tech); transform: translateY(-2px); }
+        .phrase-text span.highlight.active { background-color: var(--sun-coral); color: white; transform: scale(1.05); }
+        button, .button-like { font-family: var(--font-principal); background-color: var(--electric-mint); color: var(--navy-tech); border: none; padding: 12px 22px; border-radius: 25px; cursor: pointer; font-size: 1.05em; font-weight: 600; transition: all 0.2s ease-out; margin-top: 10px; display: inline-flex; align-items: center; box-shadow: var(--shadow-sm); text-decoration: none; }
+        button:hover, .button-like:hover { background-color: #23bba0; transform: translateY(-2px) scale(1.02); box-shadow: var(--shadow-md); }
+        button:active, .button-like:active { transform: translateY(0px) scale(0.98); box-shadow: inset 0 2px 4px rgba(0,0,0,0.1); }
+        button.record-btn { background-color: var(--sun-coral); color: var(--blanco-nitido); }
+        button.record-btn:hover { background-color: #e04f62; }
+        button.record-btn.recording { background-color: #c0392b; animation: pulse 1.2s infinite ease-in-out; }
+        button.mark-completed-btn { background-color: var(--gris-suave); color: var(--texto-secundario); font-size: 0.95em; padding: 10px 18px; font-weight: 500; }
+        button.mark-completed-btn.completed { background-color: var(--verde-exito); color: white; cursor: default; font-weight: 600; }
+        button.mark-completed-btn.completed:hover { background-color: var(--verde-exito); transform: none; box-shadow: var(--shadow-sm); }
+        .icon { font-size: 1.4em; margin-right: 10px; vertical-align: middle; }
+        h2 .icon { font-size: 1.7em; color: var(--electric-mint); }
+        button .icon { font-size: 1.2em; margin-right: 8px; color: inherit; }
+        input[type="text"], textarea { font-family: var(--font-principal); width: calc(100% - 26px); padding: 12px; margin-bottom: 12px; border: 2px solid var(--gris-medio); border-radius: 8px; font-size: 1.1em; box-sizing: border-box; transition: border-color 0.3s ease, box-shadow 0.3s ease; font-weight: 400; }
+        input[type="text"]:focus, textarea:focus { border-color: var(--electric-mint); box-shadow: 0 0 0 3px rgba(44, 230, 184, 0.3); outline: none; }
+        textarea { min-height: 100px; resize: vertical; }
+        .feedback { padding: 15px 20px; margin-top: 12px; border-radius: 10px; font-weight: 500; font-size: 1.1em; text-align: center; animation: pulseFeedback 0.5s ease; border-width: 2px; border-style: solid; }
+        .feedback.success { background-color: #ECFDF5; color: #065F46; border-color: var(--verde-exito); }
+        .feedback.error { background-color: #FEF2F2; color: #991B1B; border-color: var(--rojo-error); }
+        .feedback.info { background-color: #EFF6FF; color: #1E40AF; border-color: #60A5FA; }
+        .grammar-explanation { background-color: var(--azul-claro-fondo); padding: 15px; border-radius: 8px; margin-bottom: 20px; border-left: 5px solid var(--sun-coral); }
+        .grammar-explanation p { font-weight: 500; margin-bottom: 10px; }
+        .grammar-explanation strong { color: var(--navy-tech); font-weight: 700; }
+        
+        .vocab-list-item { display: flex; justify-content: space-between; align-items: center; padding: 10px; margin-bottom: 8px; background-color: var(--blanco-nitido); border: 1px solid var(--gris-suave); border-radius: 8px; }
+        .vocab-list-item .vocab-word-details { flex-grow: 1; margin-right: 10px;}
+        .vocab-list-item .vocab-word-details strong { font-weight: 600; font-size: 1.1em; display: block; }
+        .vocab-list-item .vocab-word-details .translation { color: var(--texto-secundario); font-size: 0.9em; font-style: italic; display:block; }
+        .vocab-list-item .vocab-word-details .pronunciation-guide { 
+            color: var(--sun-coral); font-size: 0.9em; font-weight: 500; 
+            display: block; margin-top: 4px;
+        }
+
+        .reading-text-block { background-color: #fffaf0; padding: 20px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #ffe7cc; line-height: 1.8; }
+        .reading-text-block p { font-weight: 400; }
+        .reading-text-block .highlight-pronoun { background-color: var(--electric-mint); color: var(--navy-tech); padding: 0.1em 0.3em; border-radius: 3px; font-weight: 600; }
+        .reading-text-block .highlight-possessive { background-color: var(--sun-coral); color: white; padding: 0.1em 0.3em; border-radius: 3px; font-weight: 600; }
+        
+        #section-summaryTips { background-color: var(--azul-claro-fondo); }
+        #section-summaryTips h2 .icon { color: var(--amarillo-info); }
+        #section-summaryTips ul { list-style: none; padding-left: 0; }
+        #section-summaryTips ul li {
+            background-color: transparent; border-left: 4px solid var(--amarillo-info); 
+            padding: 10px 15px 10px 35px; 
+            margin-bottom: 10px; font-size: 1.05em; position: relative; 
+        }
+        #section-summaryTips ul li::before { 
+            content: "💡"; color: var(--amarillo-info);
+            margin-right: 10px; font-size: 1.2em; 
+            position: absolute; left: 8px; top: 50%; transform: translateY(-50%); 
+        }
+
+        .quiz-question { margin-bottom: 25px; padding: 20px; background-color: var(--blanco-nitido); border-radius: 10px; border: 1px solid var(--gris-suave); box-shadow: var(--shadow-sm); }
+        .quiz-question p.question-text { font-weight: 600; margin-bottom: 15px; font-size: 1.15em; color: var(--navy-tech); }
+        .quiz-options label { display: block; margin-bottom: 10px; padding: 14px 18px; border: 2px solid var(--gris-medio); border-radius: 25px; cursor: pointer; transition: all 0.2s ease-out; font-size: 1.05em; font-weight: 400; }
+        .quiz-options label:hover { background-color: #E0F2FE; border-color: var(--electric-mint); transform: translateX(3px); }
+        .quiz-options input[type="radio"] { margin-right: 12px; vertical-align: middle; transform: scale(1.2); }
+        .quiz-options label.correct { background-color: #D1FAE5 !important; border-color: var(--verde-exito) !important; color: #047857; font-weight: 600; }
+        .quiz-options label.incorrect { background-color: #FEE2E2 !important; border-color: var(--rojo-error) !important; color: #B91C1C; font-weight: 500; }
+        .explanation { font-size: 0.95em; margin-top: 10px; padding: 10px 12px; border-radius: 6px; background-color: #FFFBEB; color: #713F12; border: 1px solid var(--amarillo-info); font-weight: 400; }
+        .explanation .icon { font-size: 1.2em; color: var(--amarillo-info); margin-right: 5px; }
+        
+        /* Alfabeto Dinámico Estilos */
+        #section-vocabAlphabet .alphabet-display-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(45px, 1fr)); gap: 8px; padding: 15px; background-color: var(--blanco-nitido); border-radius: 10px; box-shadow: var(--shadow-sm); margin: 20px auto; max-width: 600px; }
+        .alphabet-char { display: flex; justify-content: center; align-items: center; background-color: var(--gris-suave); border: 1px solid var(--gris-medio); border-radius: 6px; font-size: 1.5em; font-weight: 600; color: var(--navy-tech); cursor: pointer; transition: all 0.2s ease-out; aspect-ratio: 1 / 1; min-height: 45px; }
+        .alphabet-char:hover { background-color: var(--electric-mint); color: var(--navy-tech); transform: scale(1.08) translateY(-1px); border-color: var(--electric-mint); box-shadow: var(--shadow-md); }
+        #section-vocabAlphabet .alphabet-actions { display: flex; flex-direction: column; align-items: center; gap: 10px; margin-top: 15px;}
+        
+        .listening-exercise .conversation { margin-bottom: 20px; padding: 20px; border: 1px dashed var(--gris-medio); border-radius: 10px; background-color: #fdfdff; }
+        .listening-exercise .speaker { font-weight: 600; color: var(--navy-tech); margin-right: 5px; }
+        /* AJUSTE PARA INPUTS DE FILL-IN-THE-BLANKS */
+        .listening-exercise input[type="text"].fill-in-blank-input,
+        #section-grammarPersonal input[type="text"].fill-in-blank-input { 
+            font-family: var(--font-principal); margin: 0 5px; border: 2px solid var(--electric-mint); 
+            border-radius: 6px; padding: 6px 8px; font-size: 1em; 
+            background-color: #F0FFFF; width: auto; min-width: 60px; /* Un poco más de ancho */
+            text-align: center; font-weight: 400; 
+        }
+        .listening-exercise input[type="text"].fill-in-blank-input::placeholder,
+        #section-grammarPersonal input[type="text"].fill-in-blank-input::placeholder { 
+            color: var(--gris-oscuro); /* Placeholder más visible */
+            font-style: normal; /* No itálica para que parezca un hueco */
+            font-weight: 300; 
+            font-size: 0.9em;
+        }
+
+        .ai-interaction { margin-top: 35px; padding: 25px; border: 2px dashed var(--sun-coral); border-radius: 12px; background-color: #FFF7F5; }
+        .ai-interaction h2 .icon { color: var(--sun-coral); }
+        .ai-interaction textarea { border-color: var(--sun-coral); font-family: var(--font-principal); }
+        .ai-interaction #aiResponse { margin-top: 15px; padding: 18px; background-color: var(--blanco-nitido); border: 1px solid var(--gris-suave); border-radius: 10px; min-height: 70px; white-space: pre-wrap; font-family: var(--font-principal); font-size: 1.05em; color: var(--texto-secundario); line-height: 1.6; font-weight: 400; }
+        .ai-interaction .ai-buttons-container { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+        .ai-interaction button { background-color: var(--sun-coral); color: var(--blanco-nitido); font-family: var(--font-principal); }
+        .ai-interaction button:hover { background-color: #dd5265; }
+        .ai-interaction button.send-text-btn { background-color: var(--gris-suave); color: var(--texto-secundario); font-size: 0.9em; padding: 10px 18px; }
+        .ai-interaction button.send-text-btn:hover { background-color: var(--gris-medio); }
+        .ai-interaction button.recording { animation: pulse 1.2s infinite ease-in-out; }
+
+        
+        /* Estilos de la Ventana Emergente (Modal) */
+        #completionOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(26, 31, 54, 0.8); z-index: 2000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
+        #completionModal { background: white; padding: 40px; border-radius: 16px; text-align: center; box-shadow: var(--shadow-lg); animation: modal-pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; max-width: 500px; width: 90%; }
+        #completionModal .icon-modal { font-size: 4em; display: inline-block; animation: tada 1s; content: '🎉'; margin-bottom: 20px; }
+        #completionModal h2 { font-size: 2em; color: var(--navy-tech); border: none; margin-bottom: 10px; justify-content: center; }
+        #completionModal p { font-size: 1.2em; color: var(--texto-secundario); margin-bottom: 25px; }
+        #completionModal button { background-color: var(--navy-tech); color: white; }
+
+        @media (max-width: 850px) {
+            body { padding-top: 0; }
+            header { position: static; height: auto; padding: 10px 15px; }
+            .logo { font-size: 1.6em; margin: 0; }
+            .mobile-menu-toggle { display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; position: absolute; left: 15px; top: 50%; transform: translateY(-50%); z-index: 1003;}
+            header .logo { position: absolute; left: 50%; transform: translateX(-50%); }
+            .header-placeholder { display: none; }
+            .main-wrapper { flex-direction: column; margin-top: 0; height: auto; }
+            .sidebar {
+                width: 85%; max-width: 280px; position: fixed; 
+                top: 0; left: -100%; bottom: 0;
+                z-index: 1001; 
+                background-color: #f8f9fa;
+                transition: left 0.3s ease-in-out;
+                border-right: 1px solid var(--gris-medio); 
+                box-shadow: 2px 0 10px rgba(0,0,0,0.2);
+                overflow-y: auto; 
+            }
+            .sidebar.active { left: 0; }
+            .sidebar-header-info { padding: 20px 15px; text-align: left; }
+            .sidebar-header-info h1.lesson-title-sidebar { font-size: 1.1em; }
+            .progress-bar-container-sidebar { height: 14px; }
+            .progress-text-sidebar { line-height: 14px; font-size: 0.7em;}
+            .sidebar-menu-container { padding: 15px; flex-grow: 1;}
+            .sidebar-menu-container h3 { text-align: left; font-size: 0.9em; }
+            #lessonSectionsMenu { display: flex; flex-direction: column; align-items: stretch; }
+            #lessonSectionsMenu li a { padding: 10px 15px; font-size: 0.95em; border: none; }
+            #lessonSectionsMenu li a .menu-icon { display: inline-block; }
+            .content-area { padding: 20px 15px; }
+            .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; }
+            .sidebar.active ~ .overlay { display: block; }
+            h2 { font-size: 1.6em; }
+            .phrase-text { font-size: 1.2em; }
+            #section-vocabAlphabet .alphabet-display-container { grid-template-columns: repeat(auto-fill, minmax(40px, 1fr)); gap: 5px; padding: 10px; }
+            .alphabet-char { font-size: 1.3em; padding: 8px; min-height: 40px;}
+        }
+    </style>
+</head>
+<body>
+    <header id="appHeader">
+        <button class="mobile-menu-toggle" aria-label="Toggle menu" onclick="toggleMobileMenu()">☰</button>
+        <div class="logo">SMARTCLASS</div>
+        <div style="width: 48px;" class="header-placeholder"></div> 
+    </header>
+
+    <div class="main-wrapper">
+        <aside class="sidebar" id="lessonSidebar">
+            <div class="sidebar-header-info">
+                <h1 class="lesson-title-sidebar">Lesson 1 - My Personal World</h1>
+                <div class="progress-bar-wrapper">
+                    <div class="progress-bar-container-sidebar">
+                        <div class="progress-bar-sidebar" id="progressBarSidebar"></div>
+                    </div>
+                    <span class="progress-percentage-text" id="progressTextSidebar">0%</span>
+                </div>
+            </div>
+            <div class="sidebar-menu-container">
+                <h3><span class="icon" style="font-size: 1em;">📖</span> Contenido</h3>
+                <nav>
+                    <ul id="lessonSectionsMenu">
+                        <!-- Generado por JS -->
+                    </ul>
+                </nav>
+            </div>
+        </aside>
+         <div class="overlay" id="mobileMenuOverlay" onclick="toggleMobileMenu()"></div>
+
+        <main class="content-area" id="contentArea">
+            <p style="font-size: 1.2em; text-align: center; color: var(--texto-secundario); margin-bottom: 30px; font-weight: 500;">
+                ¡Hola, futuro bilingüe! 👋 Bienvenido/a a tu primera aventura en inglés. Hoy desbloquearás el poder de presentarte. ¡Prepárate para sorprenderte con lo que aprenderás! 🚀
+            </p>
+
+            <section id="section-step1" class="lesson-step" data-step-id="step1" data-title="Escucha Clave" data-icon="🎧" style="animation-delay: 0.1s;">
+                <h2><span class="icon">🎧</span> Paso 1: Melodías Clave (Escucha Atentamente)</h2>
+                <p>Concentra tus oídos. Haz clic en "Escuchar" para oír cómo suenan estas frases mágicas. Puedes hacer clic en cada palabra para escucharla por separado.</p>
+                <div class="phrase-block">
+                    <p class="phrase-text">
+                        <span class="highlight" onclick="speakWord('Hi', 'en-US', this)">Hi,</span> 
+                        <span class="highlight" onclick="speakWord('I’m', 'en-US', this)">I’m</span> 
+                        <span class="highlight" onclick="speakWord('Ana.', 'en-US', this)">Ana.</span>
+                    </p>
+                    <button onclick="speakPhrase('Hi, I’m Ana.', 'en-US')"><span class="icon">🔊</span> Escuchar</button>
+                </div>
+                <div class="phrase-block">
+                    <p class="phrase-text">
+                        <span class="highlight" onclick="speakWord('I’m', 'en-US', this)">I’m</span> 
+                        <span class="highlight" onclick="speakWord('from', 'en-US', this)">from</span> 
+                        <span class="highlight" onclick="speakWord('Venezuela.', 'en-US', this)">Venezuela.</span>
+                    </p>
+                    <button onclick="speakPhrase('I’m from Venezuela.', 'en-US')"><span class="icon">🔊</span> Escuchar</button>
+                </div>
+                <div class="phrase-block">
+                    <p class="phrase-text">
+                        <span class="highlight" onclick="speakWord('Nice', 'en-US', this)">Nice</span> 
+                        <span class="highlight" onclick="speakWord('to', 'en-US', this)">to</span> 
+                        <span class="highlight" onclick="speakWord('meet', 'en-US', this)">meet</span> 
+                        <span class="highlight" onclick="speakWord('you.', 'en-US', this)">you.</span>
+                    </p>
+                    <button onclick="speakPhrase('Nice to meet you.', 'en-US')"><span class="icon">🔊</span> Escuchar</button>
+                </div>
+                <div class="living-english-tip">
+                    <span class="icon">💡</span><strong>Living English:</strong> "Hi" es un saludo informal, ¡como "Hola!". Para ser un poco más formal, puedes decir "Hello". Ambas son perfectas para empezar una conversación.
+                </div>
+                <button class="mark-completed-btn" id="completeStep1Btn" onclick="markStepCompleted('step1', this)"><span class="icon">✔️</span> Completé Escucha</button>
+            </section>
+
+            <section id="section-grammarPersonal" class="lesson-step" data-step-id="grammarPersonal" data-title="Gramática Esencial" data-icon="📖" style="animation-delay: 0.2s;">
+                <h2><span class="icon">📖</span> Gramática Esencial: ¿Quién es Quién?</h2>
+                <p>En inglés, usamos palabras especiales para hablar de personas (pronombres) y de a quién pertenecen las cosas (adjetivos posesivos). ¡Son como las etiquetas de identidad y pertenencia!</p>
+                <div class="grammar-explanation">
+                    <p><strong>Pronombres Personales (Personal Pronouns):</strong> Nos dicen QUIÉN hace la acción.</p>
+                    <ul class="grammar-list">
+                        <li><div class="text-content"><span class="term-translation"><span class="pronoun">I</span><span class="translation-grammar"> (Yo)</span></span> <span class="example-sentence"><em>I am happy.</em> (Yo estoy feliz)</span></div> <button onclick="speakPhrase('I. I am happy.', 'en-US')" title="Escuchar 'I' y ejemplo"><span class="icon">🔊</span></button></li>
+                        <li><div class="text-content"><span class="term-translation"><span class="pronoun">You</span><span class="translation-grammar"> (Tú/Usted/Ustedes)</span></span> <span class="example-sentence"><em>You are my friend.</em> (Tú eres mi amigo)</span></div> <button onclick="speakPhrase('You. You are my friend.', 'en-US')" title="Escuchar 'You' y ejemplo"><span class="icon">🔊</span></button></li>
+                        <li><div class="text-content"><span class="term-translation"><span class="pronoun">He</span><span class="translation-grammar"> (Él)</span></span> <span class="example-sentence"><em>He is tall.</em> (Él es alto)</span></div> <button onclick="speakPhrase('He. He is tall.', 'en-US')" title="Escuchar 'He' y ejemplo"><span class="icon">🔊</span></button></li>
+                        <li><div class="text-content"><span class="term-translation"><span class="pronoun">She</span><span class="translation-grammar"> (Ella)</span></span> <span class="example-sentence"><em>She is a doctor.</em> (Ella es doctora)</span></div> <button onclick="speakPhrase('She. She is a doctor.', 'en-US')" title="Escuchar 'She' y ejemplo"><span class="icon">🔊</span></button></li>
+                        <li><div class="text-content"><span class="term-translation"><span class="pronoun">It</span><span class="translation-grammar"> (Eso/ello - cosas/animales)</span></span> <span class="example-sentence"><em>It is a cat.</em> (Es un gato)</span></div> <button onclick="speakPhrase('It. It is a cat.', 'en-US')" title="Escuchar 'It' y ejemplo"><span class="icon">🔊</span></button></li>
+                        <li><div class="text-content"><span class="term-translation"><span class="pronoun">We</span><span class="translation-grammar"> (Nosotros/as)</span></span> <span class="example-sentence"><em>We are students.</em> (Somos estudiantes)</span></div> <button onclick="speakPhrase('We. We are students.', 'en-US')" title="Escuchar 'We' y ejemplo"><span class="icon">🔊</span></button></li>
+                        <li><div class="text-content"><span class="term-translation"><span class="pronoun">They</span><span class="translation-grammar"> (Ellos/as)</span></span> <span class="example-sentence"><em>They are from Brazil.</em> (Son de Brasil)</span></div> <button onclick="speakPhrase('They. They are from Brazil.', 'en-US')" title="Escuchar 'They' y ejemplo"><span class="icon">🔊</span></button></li>
+                    </ul>
+                </div>
+                <div class="grammar-explanation">
+                    <p><strong>Adjetivos Posesivos (Possessive Adjectives):</strong> Indican DE QUIÉN es algo.</p>
+                    <ul class="grammar-list">
+                        <li><div class="text-content"><span class="term-translation"><span class="adjective">My</span><span class="translation-grammar"> (Mi/mis)</span></span> <span class="example-sentence"><em>This is <strong>my</strong> book.</em> (Este es mi libro)</span></div> <button onclick="speakPhrase('My. This is my book.', 'en-US')" title="Escuchar 'My' y ejemplo"><span class="icon">🔊</span></button></li>
+                        <li><div class="text-content"><span class="term-translation"><span class="adjective">Your</span><span class="translation-grammar"> (Tu/tus; Su/sus de Ud.)</span></span> <span class="example-sentence"><em>What is <strong>your</strong> name?</em> (¿Cuál es tu nombre?)</span></div> <button onclick="speakPhrase('Your. What is your name?', 'en-US')" title="Escuchar 'Your' y ejemplo"><span class="icon">🔊</span></button></li>
+                        <li><div class="text-content"><span class="term-translation"><span class="adjective">His</span><span class="translation-grammar"> (Su/sus - de él)</span></span> <span class="example-sentence"><em><strong>His</strong> car is red.</em> (Su carro es rojo)</span></div> <button onclick="speakPhrase('His. His car is red.', 'en-US')" title="Escuchar 'His' y ejemplo"><span class="icon">🔊</span></button></li>
+                        <li><div class="text-content"><span class="term-translation"><span class="adjective">Her</span><span class="translation-grammar"> (Su/sus - de ella)</span></span> <span class="example-sentence"><em><strong>Her</strong> house is big.</em> (Su casa es grande)</span></div> <button onclick="speakPhrase('Her. Her house is big.', 'en-US')" title="Escuchar 'Her' y ejemplo"><span class="icon">🔊</span></button></li>
+                        <li><div class="text-content"><span class="term-translation"><span class="adjective">Its</span><span class="translation-grammar"> (Su/sus - de eso/animal)</span></span> <span class="example-sentence"><em>The cat likes <strong>its</strong> toy.</em> (Al gato le gusta su juguete)</span></div> <button onclick="speakPhrase('Its. The cat likes its toy.', 'en-US')" title="Escuchar 'Its' y ejemplo"><span class="icon">🔊</span></button></li>
+                        <li><div class="text-content"><span class="term-translation"><span class="adjective">Our</span><span class="translation-grammar"> (Nuestro/a/os/as)</span></span> <span class="example-sentence"><em>This is <strong>our</strong> class.</em> (Esta es nuestra clase)</span></div> <button onclick="speakPhrase('Our. This is our class.', 'en-US')" title="Escuchar 'Our' y ejemplo"><span class="icon">🔊</span></button></li>
+                        <li><div class="text-content"><span class="term-translation"><span class="adjective">Their</span><span class="translation-grammar"> (Su/sus - de ellos/as)</span></span> <span class="example-sentence"><em><strong>Their</strong> names are Lucy and James.</em> (Sus nombres son Luis y Ana)</span></div> <button onclick="speakPhrase('Their. Their names are Lucy and James.', 'en-US')" title="Escuchar 'Their' y ejemplo"><span class="icon">🔊</span></button></li>
+                    </ul>
+                </div>
+                 <div class="living-english-tip">
+                    <span class="icon">💡</span><strong>Living English:</strong> ¡Ojo! "It's" (con apóstrofo ’) es la forma corta de "it is" o "it has". "Its" (sin apóstrofo) muestra que algo pertenece a "it". Ejemplo: <em>It's a sunny day. The dog wagged its tail.</em> (Es un día soleado. El perro movió su cola).
+                </div>
+                <p style="font-weight: 500;"><strong>¡Pequeño Reto Gramatical!</strong> Escribe la palabra correcta (my, your, his, her, I, you, he, she):</p>
+                <div class="phrase-block">
+                    <span>1. <input type="text" id="grammar_q1" class="fill-in-blank-input" placeholder="___" style="width: 40px; margin-right: 5px;"> am a student. (Yo soy un estudiante)</span> 
+                    <button onclick="checkGrammarAnswer('grammar_q1', 'i', 'feedback_grammar_q1', 'pronombre')">Revisar</button>
+                </div>
+                <div id="feedback_grammar_q1" class="feedback" style="margin-top:0; margin-bottom:10px; font-size:0.9em; display:none;"></div>
+                <div class="phrase-block">
+                     <span>2. This is Maria. <input type="text" id="grammar_q2" class="fill-in-blank-input" placeholder="___" style="width: 50px; margin-right: 5px;"> pencil is blue. (Su lápiz -de ella- es azul)</span>
+                    <button onclick="checkGrammarAnswer('grammar_q2', 'her', 'feedback_grammar_q2', 'adjetivo posesivo')">Revisar</button>
+                </div>
+                <div id="feedback_grammar_q2" class="feedback" style="margin-top:0; margin-bottom:10px; font-size:0.9em; display:none;"></div>
+                 <div class="phrase-block">
+                    <span>3. What is <input type="text" id="grammar_q3" class="fill-in-blank-input" placeholder="___" style="width: 50px; margin-right: 5px;"> name? (¿Cuál es tu nombre?)</span> 
+                    <button onclick="checkGrammarAnswer('grammar_q3', 'your', 'feedback_grammar_q3', 'adjetivo posesivo')">Revisar</button>
+                </div>
+                <div id="feedback_grammar_q3" class="feedback" style="margin-top:0; margin-bottom:10px; font-size:0.9em; display:none;"></div>
+                <button class="mark-completed-btn" id="completeGrammarPersonalBtn" onclick="markStepCompleted('grammarPersonal', this)"><span class="icon">✔️</span> Entendí Pronombres y Posesivos</button>
+            </section>
+
+            <section id="section-vocabAlphabet" class="lesson-step" data-step-id="vocabAlphabet" data-title="Alfabeto Mágico" data-icon="🔤" style="animation-delay: 0.3s;">
+                <h2><span class="icon">🔤</span> Vocabulario: El Súper Alfabeto</h2>
+                <p>¡El alfabeto es tu primer superpoder en inglés! Haz clic en cada letra para escuchar su sonido secreto. Luego, ¡intenta deletrear tu nombre como un héroe!</p>
+                <div class="alphabet-display-container" id="alphabetDisplayContainer">
+                    <!-- Alfabeto dinámico aquí -->
+                </div>
+                <div class="alphabet-actions">
+                    <button onclick="speakPhrase('Great! Now try to spell your name out loud! For example, My name is Carlos. C. A. R. L. O. S. You can do it!', 'en-US')"><span class="icon">🗣️</span> Oír Instrucción</button>
+                    <button class="record-btn" id="recordAlphabetBtn" onclick="startRecognition('recordFeedbackAlphabet', this)"><span class="icon">🎤</span> Grabar Mi Deletreo</button>
+                </div>
+                <div id="recordFeedbackAlphabet" class="feedback" style="display:none;"></div>
+                 <div class="living-english-tip">
+                    <span class="icon">💡</span><strong>Living English:</strong> Deletrear tu nombre (spelling) es muy útil, especialmente por teléfono o cuando conoces a alguien con un nombre que no es común en inglés. ¡Practícalo a menudo!
+                </div>
+                <button class="mark-completed-btn" id="completeVocabAlphabetBtn" onclick="markStepCompleted('vocabAlphabet', this)"><span class="icon">✔️</span> Practiqué el Alfabeto</button>
+            </section>
+
+            <section id="section-vocabWords" class="lesson-step" data-step-id="vocabWords" data-title="Palabras Nuevas" data-icon="🗣️" style="animation-delay: 0.4s;">
+                <h2><span class="icon">🗣️</span> Vocabulario: Palabras Nuevas y Útiles</h2>
+                <p>Aquí tienes algunas palabras que te ayudarán mucho. Escúchalas, lee cómo sonarían en español y repítelas. ¡Pronto serán tus amigas!</p>
+                <div id="lessonWordsContainer">
+                    <!-- Las palabras se generarán con JS -->
+                </div>
+                <button class="mark-completed-btn" id="completeVocabWordsBtn" onclick="markStepCompleted('vocabWords', this)"><span class="icon">✔️</span> Repasé Palabras Nuevas</button>
+            </section>
+
+            <section id="section-step2" class="lesson-step" data-step-id="step2" data-title="¡Tu Voz!" data-icon="🎤" style="animation-delay: 0.5s;">
+                <h2><span class="icon">🎤</span> Paso 2: ¡Tu Voz al Mundo! (Repite)</h2>
+                <p>¡Es tu momento de brillar! Graba tu voz diciendo las frases. Intenta que suene como un nativo. (Recuerda permitir el uso del micrófono 😉).</p>
+                <div class="phrase-block">
+                    <p class="phrase-text">Hi, I’m [tu nombre].</p>
+                    <button class="record-btn" onclick="startRecognition('recordFeedback1', this)"><span class="icon">🎤</span> Grabar Ahora</button>
+                </div>
+                <div id="recordFeedback1" class="feedback" style="display:none;"></div>
+                <div class="phrase-block">
+                    <p class="phrase-text">I’m from [tu ciudad/país].</p>
+                    <button class="record-btn" onclick="startRecognition('recordFeedback2', this)"><span class="icon">🎤</span> Grabar Ahora</button>
+                </div>
+                <div id="recordFeedback2" class="feedback" style="display:none;"></div>
+                <div class="phrase-block">
+                    <p class="phrase-text">Nice to meet you.</p>
+                    <button class="record-btn" onclick="startRecognition('recordFeedback3', this)"><span class="icon">🎤</span> Grabar Ahora</button>
+                </div>
+                <div id="recordFeedback3" class="feedback" style="display:none;"></div>
+                <div class="living-english-tip">
+                    <span class="icon">💡</span><strong>Living English:</strong> Al hablar, la entonación es importante. "Nice to meet YOU" (énfasis en YOU) suena más amigable y sincero. ¡Inténtalo!
+                </div>
+                <button class="mark-completed-btn" id="completeStep2Btn" onclick="markStepCompleted('step2', this)"><span class="icon">✔️</span> Completé Práctica Oral</button>
+            </section>
+
+            <section id="section-readingComprehension" class="lesson-step" data-step-id="readingComprehension" data-title="Lectura: Rose" data-icon="🧐" style="animation-delay: 0.6s;">
+                <h2><span class="icon">🧐</span> Lectura y Comprensión: La Historia de Rose</h2>
+                <p>Lee este pequeño texto sobre Rose. Presta atención a las palabras resaltadas (pronombres en <span class="highlight-pronoun" style="padding: 0.1em 0.2em; border-radius: 3px;">verde</span> y posesivos en <span class="highlight-possessive" style="padding: 0.1em 0.2em; border-radius: 3px;">coral</span>). Luego, responde unas preguntas.</p>
+                <div class="reading-text-block" id="roseStory"></div>
+                <div id="roseQuizContainer"></div>
+                <button onclick="submitRoseQuiz()"><span class="icon">✍️</span> Revisar Respuestas de Rose</button>
+                <div id="roseQuizFeedback" class="feedback" style="display:none;"></div>
+                <button class="mark-completed-btn" id="completeReadingBtn" onclick="markStepCompleted('readingComprehension', this)"><span class="icon">✔️</span> Entendí la Historia</button>
+            </section>
+
+            <section id="section-step3Writable" class="lesson-step" data-step-id="step3Writable_auto" data-title="Escritura Guiada" data-icon="📝" style="animation-delay: 0.7s;">
+                <h2><span class="icon">📝</span> Paso 3: Tu Turno de Escribir y Deletrear</h2>
+                <p>¡Ahora combina todo! Escribe tu presentación y, si te animas, deletrea tu nombre al final (¡usa guiones entre las letras!). ¡Como los cracks!</p>
+                <textarea id="userPresentation" placeholder="Ej: Hi, I'm Valentina. I'm from Caracas. Nice to meet you. My name is V-A-L-E-N-T-I-N-A."></textarea>
+                 <div class="living-english-tip">
+                    <span class="icon">💡</span><strong>Living English:</strong> En inglés escrito, siempre se usa mayúscula al inicio de una oración y para los nombres propios (personas, ciudades, países). ¡Y no olvides el punto final (.)!
+                </div>
+                <button onclick="checkWriting()"><span class="icon">✉️</span> Enviar Mi Súper Texto</button>
+                <div id="writingFeedback" class="feedback" style="display:none;"></div>
+            </section>
+
+            <section id="section-step4Quiz" class="lesson-step" data-step-id="step4Quiz_auto" data-title="Mini Test General" data-icon="🎯" style="animation-delay: 0.8s;">
+                <h2><span class="icon">🎯</span> Paso 4: Desafío de Sabiduría (Mini Test General)</h2>
+                <p>Demuestra lo que has aprendido en toda la lección. Elige la opción correcta y ¡gana puntos de conocimiento!</p>
+                <div id="quizContainer"></div>
+                <button onclick="submitQuiz()"><span class="icon">🏆</span> ¡Revisar Mis Genialidades!</button>
+                <div id="quizFeedback" class="feedback" style="display:none;"></div>
+            </section>
+
+            <section id="section-listeningPractice" class="lesson-step listening-exercise" data-step-id="listeningPractice" data-title="Práctica Auditiva" data-icon="👂" style="animation-delay: 0.9s;">
+                <h2><span class="icon">👂</span> Práctica de Escucha: ¡Conversaciones Secretas!</h2>
+                <p>Agudiza el oído. Escucha estos diálogos y luego completa los espacios en blanco. ¡Tú puedes descifrarlos!</p>
+                <div class="conversation" id="convo1">
+                    <p><span class="speaker">A:</span> What's your name?</p>
+                    <p><span class="speaker">B:</span> I'm Ivanka.</p>
+                    <p><span class="speaker">A:</span> Can you spell it?</p>
+                    <p><span class="speaker">B:</span> I-v-a-n-k-a.</p>
+                    <p><span class="speaker">A:</span> What's your last name?</p>
+                    <p><span class="speaker">B:</span> It's Romansky. That is R-o-m-a-n-s-k-y.</p>
+                    <button onclick="listenToConversation('convo1')"><span class="icon">🔊</span> Oír Diálogo 1</button>
+                </div>
+                <div class="conversation" id="convo2">
+                    <p><span class="speaker">A:</span> What's his name?</p>
+                    <p><span class="speaker">B:</span> His name is Steven. S-t-e-v-e-n.</p>
+                    <p><span class="speaker">A:</span> What's his last name?</p>
+                    <p><span class="speaker">B:</span> It's Robinson, R-o-b-i-n-s-o-n.</p>
+                     <button onclick="listenToConversation('convo2')"><span class="icon">🔊</span> Oír Diálogo 2</button>
+                </div>
+                 <div class="living-english-tip">
+                    <span class="icon">💡</span><strong>Living English:</strong> Cuando no entiendes algo, puedes decir: "Sorry, can you repeat that, please?" (Perdón, ¿puedes repetir eso, por favor?) o "Sorry, I didn't catch that." (Perdón, no entendí eso). Son frases muy útiles.
+                </div>
+                <p style="margin-top: 25px; font-weight: 600;">Ahora, ¡a completar! Usa tu súper oído:</p>
+                <div class="conversation">
+                    <p><span class="speaker">A:</span> What's <input type="text" id="q1_v" class="fill-in-blank-input" style="width: 70px;" placeholder="_____"> name?</p>
+                    <p><span class="speaker">B:</span> I <input type="text" id="q2_v" class="fill-in-blank-input" style="width: 50px;" placeholder="___"> [Tu Nombre].</p>
+                    <p><span class="speaker">A:</span> <input type="text" id="q3_v" class="fill-in-blank-input" style="width: 80px;" placeholder="_____"> are you <input type="text" id="q4_v" class="fill-in-blank-input" style="width: 60px;" placeholder="____">?</p>
+                    <p><span class="speaker">B:</span> I'm <input type="text" id="q5_v" class="fill-in-blank-input" style="width: 60px;" placeholder="____"> [Tu País/Ciudad].</p>
+                     <button onclick="checkListeningFillInTheBlanks()"><span class="icon">✍️</span> Comprobar Mis Pistas</button>
+                     <div id="fillInFeedback" class="feedback" style="display:none;"></div>
+                </div>
+                <button class="mark-completed-btn" id="completeListeningPracticeBtn" onclick="markStepCompleted('listeningPractice', this)"><span class="icon">✔️</span> Completé Desafío Auditivo</button>
+            </section>
+            
+            <!-- ====================================================================== -->
+            <!-- ======================= INICIO DE SECCIÓN MODIFICADA ======================= -->
+            <!-- ====================================================================== -->
+            <section id="section-aiChat" class="lesson-step ai-interaction" data-step-id="aiChat" data-title="Charla con Sparky" data-icon="🤖" style="animation-delay: 1s;">
+                <h2><span class="icon">🤖</span> Charla con el Profe Sparky</h2>
+                <p>¡Es hora de practicar con un compañero muy inteligente! Usa tu voz para presentarte a "Sparky" o hazle una pregunta. Él te escuchará y te responderá. ¡También puedes escribir si lo prefieres!</p>
+                <textarea id="aiUserInput" placeholder="Tu voz aparecerá aquí... o puedes escribir directamente. Ej: Hi Sparky, I'm [tu nombre]. What's up?"></textarea>
+                 <div class="living-english-tip">
+                    <span class="icon">💡</span><strong>Living English:</strong> Con Sparky, ¡no tengas miedo de cometer errores! Es la mejor manera de aprender. Pregúntale "How are you?" (¿Cómo estás?) después de presentarte, o "What's new?" (¿Qué hay de nuevo?).
+                </div>
+                <div class="ai-buttons-container">
+                    <button id="sparky-voice-btn" onclick="startSparkyVoiceInteraction()"><span class="icon">🎤</span> Hablar con Sparky</button>
+                    <button onclick="askGemini()" class="send-text-btn"><span class="icon" style="font-size: 1.1em;">✉️</span> Enviar Texto</button>
+                </div>
+                <div id="aiResponse">Sparky está listo para charlar...</div>
+                 <button class="mark-completed-btn" id="completeAIChatBtn" onclick="markStepCompleted('aiChat', this)"><span class="icon">✔️</span> Completé Charla IA</button>
+            </section>
+            <!-- ====================================================================== -->
+            <!-- ======================== FIN DE SECCIÓN MODIFICADA ======================= -->
+            <!-- ====================================================================== -->
+
+            <section id="section-summaryTips" class="lesson-step" data-title="Tips & Tricks" data-icon="🌟" style="animation-delay: 1.1s;">
+                <h2><span class="icon">🌟</span> Tips & Tricks</h2>
+                <p>¡Excelente trabajo llegando hasta aquí! Hagamos un repaso rápido de lo más importante que aprendiste y algunos consejos para seguir brillando:</p>
+                <ul>
+                    <li><strong>Saludos básicos:</strong> "Hi" (informal), "Hello" (un poco más formal).</li>
+                    <li><strong>Presentación personal:</strong> "I'm [tu nombre]." / "My name is [tu nombre]."</li>
+                    <li><strong>Decir tu origen:</strong> "I'm from [tu ciudad/país]."</li>
+                    <li><strong>Responder al conocer a alguien:</strong> "Nice to meet you." / "Nice to meet you, too."</li>
+                    <li><strong>Pronombres personales:</strong> I, you, he, she, it, we, they (quién hace la acción).</li>
+                    <li><strong>Adjetivos posesivos:</strong> my, your, his, her, its, our, their (de quién es algo).</li>
+                    <li><strong>El Alfabeto:</strong> Fundamental para deletrear y entender la base de los sonidos.</li>
+                </ul>
+                <div class="living-english-tip">
+                    <span class="icon">🚀</span><strong>¡Súper Tip!</strong> La clave para aprender inglés es la práctica constante. Intenta usar estas frases con amigos, familiares, o ¡incluso contigo mismo/a frente al espejo! Cada pequeña práctica te acerca más a la fluidez. ¡No te rindas!
+                </div>
+                 <div class="living-english-tip">
+                    <span class="icon">🎶</span><strong>Living English - Musicalidad:</strong> El inglés tiene un ritmo y una melodía particular. Escucha música en inglés (con letra), mira series cortas para niños, o los audios de esta lección varias veces. ¡Te ayudará a acostumbrarte a cómo suena el idioma real y a mejorar tu entonación!
+                </div>
+                <div class="living-english-tip">
+                    <span class="icon">🤔</span><strong>Living English - ¿No entiendes?</strong> Si no entiendes algo, ¡pregunta! Puedes decir: "Sorry, can you repeat that, please?" (Perdón, ¿puedes repetir, por favor?) o "I don't understand." (No entiendo). ¡Es normal no entender todo al principio!
+                </div>
+                 <p style="text-align:center; font-weight:600; margin-top:20px;">¡Sigue adelante, lo estás haciendo genial! You are doing great!</p>
+            </section>
+            
+            <div style="text-align: center; margin-top: 40px;">
+                <button id="finishLessonBtn" onclick="showCompletionModal()" style="padding: 15px 35px; font-size: 1.2em; background-color: var(--navy-tech); color: var(--blanco-nitido);"><span class="icon">🏁</span> Finalizar Misión</button>
+            </div>
+        </main>
+    </div>
+    
+    <div id="completionOverlay">
+        <div id="completionModal">
+            <div class="icon-modal">🎉</div>
+            <h2>¡Misión Completada!</h2>
+            <p>¡Felicidades! Has dominado los fundamentos. Estás 100% listo para brillar en tu próxima clase en vivo.</p>
+            <button onclick="hideCompletionModal()">¡Genial!</button>
+        </div>
+    </div>
+
+
+    <script>
+        const GEMINI_API_KEY = "AIzaSyBHu1xRa0X4WXZNprZSnUpsSCc9d5Jbzqs"; 
+        const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${GEMINI_API_KEY}`;
+
+        let progress = 0;
+        const trackableStepIds = [
+            'step1', 
+            'grammarPersonal', 
+            'vocabAlphabet',
+            'vocabWords', 
+            'step2', 
+            'readingComprehension', 
+            'step3Writable_auto',
+            'step4Quiz_auto',     
+            'listeningPractice', 
+            'aiChat'
+        ];
+        let totalInteractiveSteps = trackableStepIds.length;
+        let completedSteps = new Set();
+
+        let progressBarSidebarEl, progressTextSidebarEl, completionOverlayEl, 
+            contentAreaEl, sidebarMenuEl, appHeaderEl, lessonSidebarGlobalEl, overlayEl;
+        let lessonSections = []; 
+        let headerActualHeight = 70; 
+        let voices = []; 
+        let preferredVoices = {};
+
+        const synth = window.speechSynthesis;
+        let recognition;
+        let activeUtterance = null;
+        let audioCtx;
+        let isMobileMenuOpen = false;
+        let intersectionObserver;
+        let isSpeaking = false; 
+        let appInitialized = false;
+        let initialWelcomePending = true;
+
+        function initializeSpeechAPI() {
+            if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
+                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                recognition = new SpeechRecognition();
+                recognition.continuous = false;
+                recognition.lang = 'en-US';
+                recognition.interimResults = false;
+                recognition.maxAlternatives = 1;
+            } else {
+                console.warn("Speech Recognition API no es compatible.");
+                if (document.readyState === "complete" || document.readyState === "interactive") {
+                    disableRecordButtons();
+                } else {
+                    document.addEventListener('DOMContentLoaded', disableRecordButtons);
+                }
+            }
+            
+            function disableRecordButtons() {
+                document.querySelectorAll('.record-btn, #sparky-voice-btn').forEach(btn => {
+                    btn.disabled = true;
+                    btn.innerHTML = '<span class="icon">🚫</span> Grab. No Disp.';
+                });
+            }
+
+            getAndSetVoices();
+            if (speechSynthesis.onvoiceschanged !== undefined) {
+                speechSynthesis.onvoiceschanged = getAndSetVoices;
+            }
+        }
+        
+        // ======================================================================
+        // =================== INICIO DE CÓDIGO MODIFICADO (VOZ) ====================
+        // ======================================================================
+        function getAndSetVoices() {
+            voices = synth.getVoices();
+            if (voices.length > 0) {
+                // Selección de voz mejorada para un sonido más natural (Nativo Americano)
+                preferredVoices['en-US'] = 
+                    voices.find(v => v.lang === 'en-US' && v.name.includes('Google') && v.name.toLowerCase().includes('female')) ||
+                    voices.find(v => v.lang === 'en-US' && v.name.toLowerCase().includes('zira')) ||
+                    voices.find(v => v.lang === 'en-US' && v.name.toLowerCase().includes('samantha')) ||
+                    voices.find(v => v.lang === 'en-US' && v.name.includes('Google')) ||
+                    voices.find(v => v.lang === 'en-US' && v.localService) ||
+                    voices.find(v => v.lang === 'en-US') ||
+                    voices.find(v => v.lang.startsWith('en-'));
+
+                preferredVoices['es-VE'] = 
+                    voices.find(v => v.lang === 'es-VE' && v.localService) ||
+                    voices.find(v => v.lang.startsWith('es-'));
+                
+                if (typeof synth.onvoiceschanged === "function" && synth.onvoiceschanged === getAndSetVoices) {
+                    synth.onvoiceschanged = null; 
+                }
+                if (appInitialized && initialWelcomePending) {
+                    initialWelcomePending = false;
+                    playWelcomeMessage();
+                }
+            }
+        }
+        // ======================================================================
+        // ==================== FIN DE CÓDIGO MODIFICADO (VOZ) ====================
+        // ======================================================================
+
+        
+        function playSound(type) {
+            try {
+                if (!audioCtx && (window.AudioContext || window.webkitAudioContext)) {
+                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                if (!audioCtx) return;
+
+                const oscillator = audioCtx.createOscillator();
+                const gainNode = audioCtx.createGain();
+                oscillator.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
+                gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
+                gainNode.gain.linearRampToValueAtTime(0.06, audioCtx.currentTime + 0.01); 
+
+                let duration = 0.15;
+                if (type === 'correct') {
+                    oscillator.type = 'sine'; 
+                    oscillator.frequency.setValueAtTime(783.99, audioCtx.currentTime); 
+                    oscillator.frequency.linearRampToValueAtTime(1046.50, audioCtx.currentTime + 0.1); 
+                } else if (type === 'incorrect') {
+                    oscillator.type = 'square'; 
+                    oscillator.frequency.setValueAtTime(164.81, audioCtx.currentTime); 
+                    oscillator.frequency.linearRampToValueAtTime(110, audioCtx.currentTime + 0.2);
+                    duration = 0.25;
+                } else if (type === 'tada') {
+                    const now = audioCtx.currentTime;
+                    gainNode.gain.setValueAtTime(0.1, now);
+                    oscillator.type = 'triangle';
+                    oscillator.frequency.setValueAtTime(523.25, now); 
+                    oscillator.frequency.setValueAtTime(659.25, now + 0.08); 
+                    oscillator.frequency.setValueAtTime(783.99, now + 0.16); 
+                    oscillator.frequency.setValueAtTime(1046.50, now + 0.24); 
+                    duration = 0.4;
+                }
+                gainNode.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + duration);
+                oscillator.start(audioCtx.currentTime);
+                oscillator.stop(audioCtx.currentTime + duration);
+            } catch (e) { console.warn("No se pudo reproducir el sonido de feedback:", e); }
+        }
+
+        function updateProgressBar() {
+            let effectiveCompletedCount = 0;
+            completedSteps.forEach(stepId => {
+                if (trackableStepIds.includes(stepId)) {
+                    effectiveCompletedCount++;
+                }
+            });
+            
+            progress = (totalInteractiveSteps > 0) ? (effectiveCompletedCount / totalInteractiveSteps) * 100 : 0;
+            if(progressBarSidebarEl && progressTextSidebarEl) {
+                progressBarSidebarEl.style.width = progress + '%';
+                progressTextSidebarEl.textContent = Math.round(progress) + '%';
+            }
+        }
+        
+        function markStepCompleted(stepTrackId, buttonElement) { 
+            if (!completedSteps.has(stepTrackId)) {
+                completedSteps.add(stepTrackId);
+                if(buttonElement) { 
+                    buttonElement.classList.add('completed');
+                    const iconSpan = buttonElement.querySelector('.icon');
+                    buttonElement.innerHTML = (iconSpan ? iconSpan.outerHTML : '') + ' ¡Logrado! ✨';
+                    buttonElement.disabled = true;
+                }
+                
+                const sectionIdForMenu = `section-${stepTrackId.replace('_auto','')}`;
+                const menuItemLink = sidebarMenuEl.querySelector(`a[href="#${sectionIdForMenu}"]`);
+
+                if (menuItemLink && !menuItemLink.querySelector('.completed-check')) {
+                     const checkSpan = document.createElement('span');
+                     checkSpan.classList.add('completed-check');
+                     checkSpan.textContent = '✔️';
+                     menuItemLink.appendChild(checkSpan);
+                     menuItemLink.classList.add('step-completed');
+                }
+                updateProgressBar();
+            }
+        }
+        
+        function getHeaderActualHeight() {
+            return appHeaderEl ? appHeaderEl.offsetHeight : 70;
+        }
+
+        function updateLayoutAndScroll() {
+            headerActualHeight = getHeaderActualHeight();
+            document.body.style.paddingTop = `${headerActualHeight}px`;
+            
+            if (lessonSidebarGlobalEl && window.innerWidth > 850) {
+                lessonSidebarGlobalEl.style.top = `${headerActualHeight}px`;
+                lessonSidebarGlobalEl.style.height = `calc(100vh - ${headerActualHeight}px)`;
+            } else if (lessonSidebarGlobalEl) { 
+                lessonSidebarGlobalEl.style.top = `0px`; 
+                lessonSidebarGlobalEl.style.height = `100vh`;
+            }
+             if(intersectionObserver && appInitialized) { 
+                setupIntersectionObserver();
+            }
+        }
+
+        function populateSidebar() {
+            if (!sidebarMenuEl || !contentAreaEl) return;
+            sidebarMenuEl.innerHTML = '';
+            lessonSections = Array.from(contentAreaEl.querySelectorAll('section.lesson-step[id^="section-"][data-title]'));
+            
+            lessonSections.forEach((section) => {
+                const title = section.dataset.title;
+                const icon = section.dataset.icon || '🔹';
+                const sectionHtmlId = section.id;
+                const stepTrackId = section.dataset.stepId;
+
+                const listItem = document.createElement('li');
+                const link = document.createElement('a');
+                link.href = `#${sectionHtmlId}`;
+                
+                const textSpan = document.createElement('span');
+                textSpan.classList.add('menu-item-text');
+                textSpan.innerHTML = `<span class="menu-icon">${icon}</span> ${title}`;
+                link.appendChild(textSpan);
+                
+                if (stepTrackId && trackableStepIds.includes(stepTrackId) && completedSteps.has(stepTrackId)) {
+                    const checkSpan = document.createElement('span');
+                    checkSpan.classList.add('completed-check');
+                    checkSpan.textContent = '✔️';
+                    link.appendChild(checkSpan);
+                    link.classList.add('step-completed');
+                }
+                
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    scrollToSection(sectionHtmlId);
+                    if (window.innerWidth <= 850 && lessonSidebarGlobalEl && lessonSidebarGlobalEl.classList.contains('active')) {
+                        toggleMobileMenu();
+                    }
+                });
+                listItem.appendChild(link);
+                sidebarMenuEl.appendChild(listItem);
+            });
+        }
+        
+        function setupIntersectionObserver() {
+            if (intersectionObserver) intersectionObserver.disconnect();
+            
+            headerActualHeight = getHeaderActualHeight(); 
+            const marginTop = headerActualHeight + 10; 
+            const marginBottom = Math.max(0, window.innerHeight - marginTop - (window.innerHeight * 0.3)); 
+
+            const options = {
+                root: null, 
+                rootMargin: `-${marginTop}px 0px -${marginBottom}px 0px`,
+                threshold: 0.01 
+            };
+
+            intersectionObserver = new IntersectionObserver(entries => {
+                let firstIntersectingEntry = null;
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        if (!firstIntersectingEntry || entry.target.offsetTop < firstIntersectingEntry.target.offsetTop) {
+                             firstIntersectingEntry = entry;
+                        }
+                    }
+                });
+
+                if (firstIntersectingEntry) {
+                    updateActiveMenuItemDOM(firstIntersectingEntry.target.id);
+                } else {
+                    let currentScrollY = window.pageYOffset;
+                    let closestSectionId = null;
+                    let minDistance = Infinity;
+
+                    lessonSections.forEach(section => {
+                        const sectionTop = section.offsetTop - headerActualHeight -10; 
+                        const distance = Math.abs(currentScrollY - sectionTop);
+                        if (distance < minDistance) {
+                            minDistance = distance;
+                            closestSectionId = section.id;
+                        }
+                    });
+                    if (closestSectionId) {
+                        updateActiveMenuItemDOM(closestSectionId);
+                    }
+                }
+            }, options);
+
+            lessonSections.forEach(section => {
+                if(section) intersectionObserver.observe(section);
+            });
+        }
+        
+        function updateActiveMenuItemDOM(activeSectionId) {
+             if (!sidebarMenuEl) return;
+             sidebarMenuEl.querySelectorAll('a').forEach(a => a.classList.remove('active'));
+             const linkToActivate = sidebarMenuEl.querySelector(`a[href="#${activeSectionId}"]`);
+             if (linkToActivate) {
+                 linkToActivate.classList.add('active');
+             }
+        }
+
+        function scrollToSection(sectionHtmlId) {
+            const section = document.getElementById(sectionHtmlId);
+            if (section) {
+                const yOffset = -(headerActualHeight + 10); 
+                const elementPosition = section.getBoundingClientRect().top;
+                const offsetPosition = elementPosition + window.pageYOffset + yOffset;
+                window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+                updateActiveMenuItemDOM(sectionHtmlId);
+            }
+        }
+        
+        function toggleMobileMenu() {
+            isMobileMenuOpen = !isMobileMenuOpen;
+            if (lessonSidebarGlobalEl) {
+                lessonSidebarGlobalEl.classList.toggle('active', isMobileMenuOpen);
+            }
+            if (overlayEl) {
+                overlayEl.style.display = isMobileMenuOpen ? 'block' : 'none';
+            }
+        }
+        
+        function speakPhrase(text, lang = 'en-US', callback) {
+            if (!synth) { if (callback) callback(); return; }
+            
+            if (synth.speaking) {
+                synth.cancel();
+            }
+            
+            setTimeout(() => { // Delay para permitir que cancel() se complete
+                if (text !== '') {
+                    activeUtterance = new SpeechSynthesisUtterance(text);
+                    
+                    if (voices.length === 0) voices = synth.getVoices();
+
+                    let voiceToUse = preferredVoices[lang] || preferredVoices[lang.split('-')[0]] || null;
+                    if (!voiceToUse && voices.length > 0) {
+                        voiceToUse = voices.find(v => v.lang.startsWith(lang.split('-')[0])) || voices.find(v => v.lang.startsWith('en'));
+                    }
+                    if (voiceToUse) {
+                        activeUtterance.voice = voiceToUse;
+                    }
+
+                    activeUtterance.pitch = 1;
+                    activeUtterance.rate = (lang.startsWith('es-')) ? 1.05 : 0.95; 
+                    
+                    let highlightElement = document.querySelector('.phrase-text span.highlight.active');
+
+                    activeUtterance.onstart = () => { isSpeaking = true; };
+                    activeUtterance.onend = () => { 
+                        isSpeaking = false;
+                        activeUtterance = null; 
+                        if (highlightElement) highlightElement.classList.remove('active');
+                        if (typeof callback === 'function') callback();
+                    };
+                    activeUtterance.onerror = (event) => { 
+                        isSpeaking = false;
+                        console.error('SpeechSynthesisUtterance.onerror:', event.error);
+                        activeUtterance = null; 
+                        if (highlightElement) highlightElement.classList.remove('active');
+                        if (typeof callback === 'function') callback();
+                    };
+                    try {
+                        synth.speak(activeUtterance);
+                    } catch (e) {
+                        console.error("Error al synth.speak:", e);
+                        isSpeaking = false;
+                        if (typeof callback === 'function') callback();
+                    }
+                } else {
+                    if (typeof callback === 'function') callback();
+                }
+            }, 75); 
+        }
+        
+        function speakWord(word, lang = 'en-US', element) {
+            document.querySelectorAll('.phrase-text span.highlight.active').forEach(el => el.classList.remove('active'));
+            if(element) {
+                element.classList.add('active');
+            }
+            speakPhrase(word, lang); 
+        }
+        
+        let currentFeedbackElem = null;
+        let currentRecordButton = null;
+
+        function startRecognition(feedbackElementId, buttonElement) {
+            if (!recognition) {
+                const feedbackDiv = document.getElementById(feedbackElementId);
+                if (feedbackDiv) {
+                    feedbackDiv.innerHTML = `<div class="feedback error">Lo siento, la grabación de voz no está disponible en tu navegador.</div>`;
+                    feedbackDiv.style.display = 'block';
+                }
+                speakPhrase("Lo siento, la grabación de voz no está disponible en tu navegador.", 'es-VE');
+                return;
+            }
+            currentFeedbackElem = document.getElementById(feedbackElementId);
+            currentRecordButton = buttonElement;
+            
+            if (!currentFeedbackElem || !currentRecordButton) return;
+
+            currentFeedbackElem.style.display = 'block';
+            currentFeedbackElem.innerHTML = `<div class="feedback info">¡Adelante, habla! Te estoy escuchando...</div>`;
+            speakPhrase("Adelante, te escucho.", 'es-VE'); 
+            currentRecordButton.classList.add('recording');
+            currentRecordButton.disabled = true;
+            currentRecordButton.innerHTML = '<span class="icon">🛑</span> Grabando...';
+
+            recognition.onresult = function(event) {
+                const speechResult = event.results[0][0].transcript;
+                currentFeedbackElem.innerHTML = `<div class="feedback success">¡Genial! Escuché: "${speechResult}". ¡Sigue practicando así!</div>`;
+                speakPhrase("Awesome! I heard: " + speechResult + ". Keep practicing like that!", 'en-US');
+                playSound('correct');
+            }
+
+            recognition.onspeechend = function() {
+                if (recognition) recognition.stop();
+                if (currentRecordButton && currentRecordButton.classList.contains('recording')) { 
+                    currentRecordButton.classList.remove('recording');
+                    currentRecordButton.disabled = false;
+                    currentRecordButton.innerHTML = '<span class="icon">🎤</span> Grabar de Nuevo';
+                }
+            }
+
+            recognition.onerror = function(event) {
+                let errorMessage = "¡Ups! Algo pasó con la grabación: ";
+                let speakMsg = "An error occurred with voice recognition.";
+                if (event.error == 'no-speech') {
+                    errorMessage += 'No te escuché. ¿Hablaste clarito? Intenta otra vez.';
+                    speakMsg = "No te escuché. ¿Hablaste claro? Intenta otra vez.";
+                } else if (event.error == 'audio-capture') {
+                    errorMessage += 'No puedo acceder al micrófono. ¿Está conectado y con permiso?';
+                    speakMsg = "No puedo acceder al micrófono. ¿Está conectado y con permiso?";
+                } else if (event.error == 'not-allowed') {
+                    errorMessage += 'No me diste permiso para el micrófono. Revisa la configuración de tu navegador.';
+                    speakMsg = "No me diste permiso para el micrófono. Revisa la configuración de tu navegador.";
+                } else if (event.error == 'network') {
+                    errorMessage += 'Problema de red al intentar usar el reconocimiento de voz. Revisa tu conexión.';
+                    speakMsg = "Hubo un problema de red con el reconocimiento de voz. Revisa tu conexión.";
+                }
+                else {
+                    errorMessage += event.error;
+                }
+                if (currentFeedbackElem) currentFeedbackElem.innerHTML = `<div class="feedback error">${errorMessage}</div>`;
+                speakPhrase(speakMsg, 'es-VE');
+                playSound('incorrect');
+                 if (currentRecordButton) {
+                    currentRecordButton.classList.remove('recording');
+                    currentRecordButton.disabled = false;
+                    currentRecordButton.innerHTML = '<span class="icon">🎤</span> Grabar de Nuevo';
+                }
+            }
+            
+            recognition.onnomatch = function() {
+                 if (currentFeedbackElem) currentFeedbackElem.innerHTML = `<div class="feedback error">Mmm... no entendí bien. ¿Podrías repetirlo más claro?</div>`;
+                speakPhrase("Hmm, no entendí bien. ¿Puedes repetirlo más claro?", 'es-VE');
+                playSound('incorrect');
+                 if (currentRecordButton) { 
+                    currentRecordButton.classList.remove('recording');
+                    currentRecordButton.disabled = false;
+                    currentRecordButton.innerHTML = '<span class="icon">🎤</span> Grabar de Nuevo';
+                }
+            }
+
+            try {
+                 if (recognition && typeof recognition.start === 'function') recognition.start();
+                 else console.error("recognition.start no es una función o recognition no está definido");
+            } catch(e) {
+                console.error("Error al iniciar reconocimiento:", e);
+                if (currentFeedbackElem) currentFeedbackElem.innerHTML = `<div class="feedback error">Error al iniciar grabación: ${e.message}. Intenta recargar.</div>`;
+                 if (currentRecordButton) {
+                    currentRecordButton.classList.remove('recording');
+                    currentRecordButton.disabled = false;
+                    currentRecordButton.innerHTML = '<span class="icon">🎤</span> Grabar de Nuevo';
+                }
+                playSound('incorrect');
+            }
+        }
+
+        function checkGrammarAnswer(inputId, correctAnswer, feedbackId, type) {
+            const userAnswer = document.getElementById(inputId).value.trim().toLowerCase();
+            const feedbackDiv = document.getElementById(feedbackId);
+            const inputField = document.getElementById(inputId);
+            if (!feedbackDiv || !inputField) return;
+            feedbackDiv.style.display = 'block';
+
+            if (userAnswer === correctAnswer.toLowerCase()) {
+                feedbackDiv.innerHTML = `<div class="feedback success">¡Correcto! "${correctAnswer.charAt(0).toUpperCase() + correctAnswer.slice(1)}" es el ${type} correcto.</div>`;
+                speakPhrase("Correct!", "en-US");
+                inputField.style.borderColor = 'var(--verde-exito)';
+                playSound('correct');
+            } else {
+                feedbackDiv.innerHTML = `<div class="feedback error">¡Casi! La respuesta correcta es "${correctAnswer.charAt(0).toUpperCase() + correctAnswer.slice(1)}". Revisa la explicación de arriba.</div>`;
+                speakPhrase("Almost! The correct answer is " + correctAnswer + ". Please review the explanation above.", "en-US");
+                inputField.style.borderColor = 'var(--rojo-error)';
+                playSound('incorrect');
+                inputField.focus();
+            }
+        }
+
+        const lessonVocabularyData = [
+            { word: "name", translation: "nombre", pronunciation: "neim" }, 
+            { word: "computer", translation: "computadora", pronunciation: "com-piú-ter" },
+            { word: "librarian", translation: "bibliotecario/a", pronunciation: "lai-brér-i-an" }, 
+            { word: "materials", translation: "materiales", pronunciation: "ma-tí-ri-als" },
+            { word: "pajamas", translation: "pijama", pronunciation: "pa-yá-mas" }, 
+            { word: "grammar", translation: "gramática", pronunciation: "grá-mar" },
+            { word: "veterinary", translation: "veterinario/a", pronunciation: "vé-te-ri-ne-ri" }, 
+            { word: "international", translation: "internacional", pronunciation: "in-ter-ná-sho-nal" },
+            { word: "zoo", translation: "zoológico", pronunciation: "zuu" }, 
+            { word: "last name", translation: "apellido", pronunciation: "last néim" }
+        ];
+
+        function displayLessonVocabulary() {
+            const container = document.getElementById('lessonWordsContainer');
+            if (!container) return;
+            container.innerHTML = '';
+            lessonVocabularyData.forEach(item => {
+                const div = document.createElement('div');
+                div.classList.add('vocab-list-item');
+                div.innerHTML = `
+                    <div class="vocab-word-details">
+                        <strong>${item.word.charAt(0).toUpperCase() + item.word.slice(1)}</strong>
+                        <span class="translation">(${item.translation})</span>
+                        ${item.pronunciation ? `<span class="pronunciation-guide">${item.pronunciation}</span>` : ''}
+                    </div>
+                    <button onclick="speakPhrase('${item.word}', 'en-US')" title="Escuchar '${item.word}'"><span class="icon">🔊</span></button>
+                `;
+                container.appendChild(div);
+            });
+        }
+        const roseTextData = "My name is Rose and I live near downtown. I would like to talk about my best friend. Her name is Lynn and she is 12. She lives just across the street, her house is at the corner. She has a brother; his name is Tony and he is 12. Lynn has a dog. It is a Golden Retriever, its name is Laika. She lives with her parents. They are really nice; their names are Lucy and James.";
+        
+        function displayRoseStory() {
+            const storyContainer = document.getElementById('roseStory');
+            if (!storyContainer) return;
+            const personalPronounsRegex = /\b(I|He|he|She|she|It|They)\b/g;
+            const possessiveAdjRegex = /\b(My|my|Her|her|His|his|Its|its|Our|our|Their|their|Your|your)\b/g; 
+            
+            let highlightedText = roseTextData;
+            highlightedText = highlightedText.replace(possessiveAdjRegex, (match) => {
+                return `<span class="highlight-possessive" title="Adjetivo Posesivo">${match}</span>`;
+            });
+            highlightedText = highlightedText.replace(personalPronounsRegex, (match) => {
+                if (match.includes('span')) return match;
+                return `<span class="highlight-pronoun" title="Pronombre Personal">${match}</span>`;
+            });
+            storyContainer.innerHTML = `<p>${highlightedText}</p>`;
+        }
+
+        const roseQuizData = [
+            { question: "¿Cómo se llama la amiga de Rose?", options: ["Rose", "Lynn", "Laika", "Lucy"], answer: "Lynn", explanation: "El texto dice: '...my best friend. Her name is Lynn...' (mi mejor amiga. Su nombre es Lynn)." },
+            { question: "¿Cuántos años tiene el hermano de Lynn, Tony?", options: ["10", "12", "No dice la edad de Tony", "15"], answer: "12", explanation: "'She has a brother; his name is Tony and he is 12.' (Ella tiene un hermano; su nombre es Tony y él tiene 12 años)." },
+            { question: "¿De qué raza es el perro de Lynn?", options: ["No se menciona", "Poodle", "Golden Retriever", "Labrador"], answer: "Golden Retriever", explanation: "'It is a Golden Retriever, its name is Laika.' (Es un Golden Retriever, su nombre es Laika)." },
+            { question: "La palabra 'They' en 'They are really nice' se refiere a:", options: ["Rose y Lynn", "Los padres de Lynn", "Tony y Laika", "Los amigos del vecindario"], answer: "Los padres de Lynn", explanation: "'She lives with her parents. They are really nice...' (Ella vive con sus padres. Ellos son muy amables...)." }
+        ];
+
+        function displayRoseQuiz() {
+            const quizContainer = document.getElementById('roseQuizContainer');
+            if (!quizContainer) return;
+            quizContainer.innerHTML = '';
+            roseQuizData.forEach((q, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.classList.add('quiz-question');
+                let optionsHTML = `<p class="question-text">${index + 1}. ${q.question}</p><div class="quiz-options">`;
+                q.options.forEach(option => {
+                    optionsHTML += `
+                        <label>
+                            <input type="radio" name="rose_question${index}" value="${option}">
+                            ${option}
+                        </label>
+                    `;
+                });
+                optionsHTML += `</div><div class="explanation" id="rose_explanation${index}" style="display:none;"></div>`;
+                questionDiv.innerHTML = optionsHTML;
+                quizContainer.appendChild(questionDiv);
+            });
+        }
+        function submitRoseQuiz() {
+            const feedbackDiv = document.getElementById('roseQuizFeedback');
+            if (!feedbackDiv) return;
+            feedbackDiv.style.display = 'block';
+            let score = 0;
+            let allAnswered = true;
+            let firstErrorRadioName = null;
+
+            roseQuizData.forEach((q, index) => {
+                const selectedOption = document.querySelector(`input[name="rose_question${index}"]:checked`);
+                const explanationDiv = document.getElementById(`rose_explanation${index}`);
+                const optionElements = document.querySelectorAll(`input[name="rose_question${index}"]`);
+
+                optionElements.forEach(optEl => {
+                    optEl.parentElement.classList.remove('correct', 'incorrect');
+                });
+
+                if (selectedOption) {
+                    if(explanationDiv) {
+                      explanationDiv.innerHTML = `<span class="icon">💡</span> ${q.explanation}`;
+                      explanationDiv.style.display = 'block';
+                    }
+                    if (selectedOption.value === q.answer) {
+                        score++;
+                        selectedOption.parentElement.classList.add('correct');
+                    } else {
+                        selectedOption.parentElement.classList.add('incorrect');
+                        optionElements.forEach(optEl => {
+                           if(optEl.value === q.answer) optEl.parentElement.classList.add('correct');
+                        });
+                        if(!firstErrorRadioName) firstErrorRadioName = `rose_question${index}`;
+                    }
+                } else {
+                    allAnswered = false;
+                    if(!firstErrorRadioName) firstErrorRadioName = `rose_question${index}`;
+                }
+            });
+
+            if (!allAnswered) {
+                feedbackDiv.innerHTML = `<div class="feedback error">¡A responder todo! Te falta alguna pregunta sobre Rose.</div>`;
+                speakPhrase("Por favor, responde todas las preguntas sobre Rose.", 'es-VE');
+                playSound('incorrect');
+                 if (firstErrorRadioName) {
+                     const firstErrorElement = document.querySelector(`input[name="${firstErrorRadioName}"]`);
+                     if (firstErrorElement) {
+                         firstErrorElement.focus();
+                         firstErrorElement.parentElement.scrollIntoView({behavior: "smooth", block: "center", inline: "nearest"});
+                     }
+                }
+                return;
+            }
+            
+            let feedbackMessage = '';
+            let speakText = '';
+            if (score === roseQuizData.length) {
+                feedbackMessage = `<div class="feedback success">¡Increíble! Entendiste la historia de Rose a la perfección. (${score}/${roseQuizData.length}) ¡Eres un detective de lecturas!</div>`;
+                speakText = "Incredible! You understood Rose's story perfectly!";
+                playSound('correct');
+            } else if (score >= roseQuizData.length * 0.6) {
+                feedbackMessage = `<div class="feedback success">¡Buen trabajo con la historia de Rose! ${score}/${roseQuizData.length} correctas. Sigue así.</div>`;
+                speakText = `Good job with Rose's story! You got ${score} out of ${roseQuizData.length} correct. Keep it up!`;
+                playSound('correct');
+            } else {
+                feedbackMessage = `<div class="feedback error">Entendiste ${score}/${roseQuizData.length} sobre Rose. ¡No te preocupes! Revisa las explicaciones y el texto. ¡Puedes lograrlo!</div>`;
+                speakText = `You understood ${score} out of ${roseQuizData.length} about Rose. Don't worry! Review the explanations and the text. You can do it!`;
+                playSound('incorrect');
+            }
+            feedbackDiv.innerHTML = feedbackMessage;
+            speakPhrase(speakText, 'en-US');
+        }
+
+        function checkWriting() {
+            const presentationInput = document.getElementById('userPresentation');
+            const feedbackDiv = document.getElementById('writingFeedback');
+            if (!presentationInput || !feedbackDiv) return;
+
+            const presentation = presentationInput.value;
+            feedbackDiv.style.display = 'block';
+            const minLength = 15; 
+            const requiredPhrases = ["i'm", "from", "nice to meet you"]; 
+
+            let missing = [];
+            requiredPhrases.forEach(phrase => {
+                if (!presentation.toLowerCase().includes(phrase)) {
+                    missing.push(`"${phrase.charAt(0).toUpperCase() + phrase.slice(1)}"`);
+                }
+            });
+            
+            let capitalError = false;
+            const sentences = presentation.split('.').filter(s => s.trim() !== '');
+             if (presentation.trim() && sentences.length > 0) { 
+                for (let sentence of sentences) {
+                    const firstWordTrimmed = sentence.trim();
+                    if (firstWordTrimmed.length > 0) {
+                        const firstLetter = firstWordTrimmed.charAt(0);
+                        if (firstLetter !== firstLetter.toUpperCase()) {
+                            if (!(firstWordTrimmed.toLowerCase().startsWith("i'm") && firstLetter === 'i')) { 
+                               capitalError = true;
+                               break; 
+                            }
+                        }
+                    }
+                }
+                if (!capitalError && presentation.trim().length > 0) {
+                    const firstOverallLetter = presentation.trim().charAt(0);
+                     if (firstOverallLetter !== firstOverallLetter.toUpperCase() && !(presentation.trim().toLowerCase().startsWith("i'm"))) {
+                         capitalError = true;
+                     }
+                }
+            } else if (presentation.trim()) { 
+                 const firstOverallLetter = presentation.trim().charAt(0);
+                 if (firstOverallLetter !== firstOverallLetter.toUpperCase() && !(presentation.trim().toLowerCase().startsWith("i'm"))) {
+                     capitalError = true;
+                 }
+            }
+
+            const stepIdForProgress = 'step3Writable_auto';
+
+            if (presentation.length >= minLength && missing.length === 0 && !capitalError) {
+                feedbackDiv.innerHTML = `<div class="feedback success">¡Tu presentación es ESTELAR! "${presentation}" ¡Muy bien escrito y con mayúsculas correctas!</div>`;
+                speakPhrase("Your presentation is stellar! Very well written and with correct capitalization!", 'en-US');
+                playSound('correct');
+                if (!completedSteps.has(stepIdForProgress)) { 
+                    markStepCompleted(stepIdForProgress, null); 
+                }
+            } else {
+                let errorMsg = "";
+                if (presentation.length < minLength) {
+                    errorMsg += `¡Sigue escribiendo! Tu presentación necesita al menos ${minLength} letras para ser súper completa. `;
+                }
+                if (missing.length > 0) {
+                    errorMsg += `Parece que olvidaste incluir ${missing.join(' y/o ')}. `;
+                }
+                if (capitalError) {
+                    errorMsg += "¡Recuerda usar MAYÚSCULA al inicio de las frases y en los nombres propios (como tu nombre o ciudad)! ";
+                }
+                errorMsg += "Revisa el ejemplo y prueba de nuevo. ¡Ánimo!";
+                feedbackDiv.innerHTML = `<div class="feedback error">${errorMsg}</div>`;
+                speakPhrase("Por favor, revisa tu texto.", 'es-VE');
+                playSound('incorrect');
+                 if (completedSteps.has(stepIdForProgress)) { 
+                    completedSteps.delete(stepIdForProgress);
+                    updateProgressBar();
+                }
+            }
+        }
+        
+        function generateVisualAlphabet() {
+            const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split('');
+            const container = document.getElementById('alphabetDisplayContainer');
+            if (!container) return;
+            container.innerHTML = ''; 
+            alphabet.forEach(letter => {
+                const letterDiv = document.createElement('div');
+                letterDiv.classList.add('alphabet-char');
+                letterDiv.textContent = letter;
+                letterDiv.setAttribute('aria-label', `Letra ${letter}`);
+                letterDiv.onclick = () => speakPhrase(letter, 'en-US');
+                container.appendChild(letterDiv);
+            });
+        }
+
+        async function listenToConversation(conversationId) {
+            const convoDiv = document.getElementById(conversationId);
+            if (!convoDiv) return;
+            const lines = Array.from(convoDiv.querySelectorAll('p'));
+            const button = convoDiv.querySelector('button');
+            if (button) button.disabled = true;
+
+            for (const line of lines) {
+                const speakerSpan = line.querySelector('.speaker');
+                let textToSpeak = line.textContent;
+                if(speakerSpan) {
+                    textToSpeak = line.textContent.replace(speakerSpan.textContent, '').trim();
+                }
+                
+                if (textToSpeak) {
+                     await new Promise(resolve => {
+                        speakPhrase(textToSpeak, 'en-US', resolve);
+                    });
+                    await new Promise(resolve => setTimeout(resolve, 150)); 
+                }
+            }
+            if(button) button.disabled = false;
+        }
+
+        function checkListeningFillInTheBlanks() {
+            const answers = { q1_v: "your", q2_v: "am", q3_v: "where", q4_v: "from", q5_v: "from" };
+            let allCorrect = true;
+            let firstErrorField = null;
+            const feedbackDiv = document.getElementById('fillInFeedback');
+            if (!feedbackDiv) return;
+            feedbackDiv.style.display = 'block';
+
+            for (const qid in answers) {
+                const inputField = document.getElementById(qid);
+                if (!inputField) continue;
+                const userAnswer = inputField.value.trim().toLowerCase();
+                inputField.style.backgroundColor = '#F0FFFF'; 
+                if (userAnswer === answers[qid]) {
+                    inputField.style.borderColor = 'var(--verde-exito)';
+                } else {
+                    allCorrect = false;
+                    inputField.style.borderColor = 'var(--rojo-error)';
+                    if (!firstErrorField) firstErrorField = inputField;
+                }
+            }
+            
+            if (allCorrect) {
+                feedbackDiv.innerHTML = `<div class="feedback success">¡Todas correctas! Eres un detective del audio. ¡Muy bien!</div>`;
+                speakPhrase("All correct! You are an audio detective! Very good!", 'en-US');
+                playSound('correct');
+            } else {
+                feedbackDiv.innerHTML = `<div class="feedback error">Algunas respuestas no encajan. Revisa las marcadas en rojo y escucha de nuevo si necesitas. ¡No te rindas!</div>`;
+                speakPhrase("Algunas respuestas no están bien. Revisa las marcadas en rojo y escucha de nuevo si es necesario. ¡No te rindas!", 'es-VE');
+                playSound('incorrect');
+                if (firstErrorField) firstErrorField.focus();
+            }
+        }
+
+        const quizData = [ 
+             { question: "Si quieres decir 'Hola, soy Carlos' en inglés, ¿cuál usas?", options: ["Goodbye, I Carlos", "Hello, I'm Carlos", "Nice to be Carlos", "My name Carlos is"], answer: "Hello, I'm Carlos", explanation: "'Hello' o 'Hi' significan 'Hola'. 'I'm' es 'Yo soy'. ¡Así que 'Hello, I'm Carlos' es perfecto!" },
+            { question: "Para decir 'Soy de Maracaibo', ¿cuál es la frase correcta?", options: ["I Maracaibo", "I'm from Maracaibo", "From Maracaibo I am", "My city Maracaibo"], answer: "I'm from Maracaibo", explanation: "Recuerda: 'I'm from...' (Yo soy de...) seguido de tu ciudad o país. ¡Muy bien!" },
+            { question: "Alguien te dice 'Nice to meet you'. ¿Qué respondes para ser amigable?", options: ["Okay", "Nice to meet you, too", "My name is...", "Thank you, from Venezuela"], answer: "Nice to meet you, too", explanation: "'Nice to meet you, too' significa 'Mucho gusto en conocerte también'. ¡Es la respuesta ideal!" },
+            { question: "Escoge el ADJETIVO POSESIVO correcto para: 'That is Maria. That is ___ (su) book.'", options: ["she", "his", "her", "it's"], answer: "her", explanation: "'Her' significa 'su' (de ella). 'Her book' = 'Su libro (de ella)'. ¡Excelente!" },
+            { question: "¿Qué significa 'Their names are Lucy and James'?", options: ["Mi nombre es Lucy y James", "Nuestros nombres son Lucy y James", "Los nombres de ellos son Lucy y James", "Tu nombre es Lucy o James"], answer: "Los nombres de ellos son Lucy y James", explanation: "'Their' significa 'su/sus' (de ellos/ellas). Así que 'Their names' es 'Los nombres de ellos'." }
+        ];
+
+        function displayQuiz() {
+            const quizContainer = document.getElementById('quizContainer');
+            if (!quizContainer) return;
+            quizContainer.innerHTML = '';
+            quizData.forEach((q, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.classList.add('quiz-question');
+                let optionsHTML = `<p class="question-text">${index + 1}. ${q.question}</p><div class="quiz-options">`;
+                q.options.forEach(option => {
+                    optionsHTML += `
+                        <label>
+                            <input type="radio" name="question${index}" value="${option}">
+                            ${option}
+                        </label>
+                    `;
+                });
+                optionsHTML += `</div><div class="explanation" id="explanation${index}" style="display:none;"></div>`;
+                questionDiv.innerHTML = optionsHTML;
+                quizContainer.appendChild(questionDiv);
+            });
+        }
+
+        function submitQuiz() {
+            const feedbackDiv = document.getElementById('quizFeedback');
+            if (!feedbackDiv) return;
+            feedbackDiv.style.display = 'block';
+            let score = 0;
+            let allAnswered = true;
+            let firstErrorRadioName = null;
+
+            quizData.forEach((q, index) => {
+                const selectedOption = document.querySelector(`input[name="question${index}"]:checked`);
+                const explanationDiv = document.getElementById(`explanation${index}`);
+                const optionLabels = document.querySelectorAll(`input[name="question${index}"]`); 
+
+                optionLabels.forEach(labelInput => { 
+                    labelInput.parentElement.classList.remove('correct', 'incorrect');
+                });
+
+                if (selectedOption) {
+                    if (explanationDiv) {
+                        explanationDiv.innerHTML = `<span class="icon">💡</span> ${q.explanation}`;
+                        explanationDiv.style.display = 'block';
+                    }
+                    if (selectedOption.value === q.answer) {
+                        score++;
+                        selectedOption.parentElement.classList.add('correct');
+                    } else {
+                        selectedOption.parentElement.classList.add('incorrect');
+                        optionLabels.forEach(labelInput => {
+                           if(labelInput.value === q.answer) {
+                               labelInput.parentElement.classList.add('correct');
+                           }
+                        });
+                        if(!firstErrorRadioName) firstErrorRadioName = `question${index}`;
+                    }
+                } else {
+                    allAnswered = false;
+                     if(!firstErrorRadioName) firstErrorRadioName = `question${index}`;
+                }
+            });
+
+            if (!allAnswered) {
+                feedbackDiv.innerHTML = `<div class="feedback error">¡Oh, oh! Parece que olvidaste responder alguna pregunta del test general. ¡Revísalas!</div>`;
+                speakPhrase("Por favor, responde todas las preguntas del test.", 'es-VE');
+                playSound('incorrect');
+                if (firstErrorRadioName) {
+                     const firstErrorElement = document.querySelector(`input[name="${firstErrorRadioName}"]`);
+                     if (firstErrorElement) {
+                         firstErrorElement.focus();
+                         firstErrorElement.parentElement.scrollIntoView({behavior: "smooth", block: "center", inline: "nearest"});
+                     }
+                }
+                return;
+            }
+
+            let feedbackMessage = '';
+            let soundToPlayText = '';
+            const percentageScore = (score / quizData.length) * 100;
+            const stepIdForProgress = 'step4Quiz_auto';
+
+            if (percentageScore >= 70) { 
+                feedbackMessage = `<div class="feedback success">¡EXCELENTE TRABAJO! Has acertado ${score} de ${quizData.length}. ¡Estás aprendiendo súper rápido!</div>`;
+                soundToPlayText = `Excellent work! You got ${score} out of ${quizData.length} correct. You are learning super fast!`;
+                playSound('correct');
+                if (!completedSteps.has(stepIdForProgress)) {
+                    markStepCompleted(stepIdForProgress, null);
+                }
+            } else if (percentageScore >= 50) {
+                feedbackMessage = `<div class="feedback success">¡Buen esfuerzo! Tienes ${score} de ${quizData.length} correctas. Revisa las explicaciones y sigue adelante.</div>`;
+                soundToPlayText = `Good effort! You got ${score} out of ${quizData.length} correct. Review the explanations and keep going.`;
+                playSound('correct'); 
+                 if (completedSteps.has(stepIdForProgress)) { 
+                    completedSteps.delete(stepIdForProgress);
+                    updateProgressBar();
+                }
+            } else {
+                feedbackMessage = `<div class="feedback error">Tienes ${score} de ${quizData.length}. ¡No te preocupes! Aprender es un proceso. Revisa las explicaciones y sigue practicando. ¡Tú puedes!</div>`;
+                soundToPlayText = `You got ${score} out of ${quizData.length}. Don't worry! Learning is a process. Review the explanations and keep practicing. You can do it!`;
+                playSound('incorrect');
+                if (completedSteps.has(stepIdForProgress)) {
+                    completedSteps.delete(stepIdForProgress);
+                    updateProgressBar();
+                }
+            }
+            feedbackDiv.innerHTML = feedbackMessage;
+            speakPhrase(soundToPlayText, 'en-US');
+        }
+        
+        // ======================================================================
+        // ======================= INICIO DE CÓDIGO MODIFICADO ======================
+        // ======================================================================
+
+        function startSparkyVoiceInteraction() {
+            const aiResponseDiv = document.getElementById('aiResponse');
+            const voiceButton = document.getElementById('sparky-voice-btn');
+            const textButton = document.querySelector('#section-aiChat .send-text-btn');
+            const userInputTextArea = document.getElementById('aiUserInput');
+
+            if (!recognition) {
+                const errorMsg = "Sparky dice: Lo siento, la grabación de voz no está disponible en tu navegador. ¡Pero puedes escribirme tu mensaje!";
+                aiResponseDiv.textContent = errorMsg;
+                speakPhrase("Lo siento, la grabación de voz no está disponible en tu navegador. Pero puedes escribirme tu mensaje.", 'es-VE');
+                return;
+            }
+            
+            aiResponseDiv.textContent = "Sparky está escuchando...";
+            speakPhrase("Adelante, te escucho.", 'es-VE');
+            
+            voiceButton.classList.add('recording');
+            voiceButton.disabled = true;
+            textButton.disabled = true;
+            voiceButton.innerHTML = '<span class="icon">🛑</span> Escuchando...';
+
+            recognition.onresult = function(event) {
+                const speechResult = event.results[0][0].transcript;
+                userInputTextArea.value = speechResult; 
+                aiResponseDiv.textContent = `Escuché: "${speechResult}". Ahora, Sparky está pensando...`;
+                askGemini(); 
+            }
+
+            recognition.onspeechend = function() {
+                recognition.stop();
+            }
+
+            recognition.onerror = function(event) {
+                let errorMessage = "Sparky dice: ¡Ups! ";
+                let speakMsg = "Oops! ";
+                if (event.error == 'no-speech') {
+                    errorMessage += 'No te escuché bien. ¿Podrías hablar más cerca del micrófono?';
+                    speakMsg = "I didn't hear you clearly. Could you speak closer to the microphone?";
+                } else if (event.error == 'not-allowed') {
+                    errorMessage += 'No me diste permiso para usar el micrófono. Revisa la configuración de tu navegador.';
+                    speakMsg = "You didn't give me permission to use the microphone. Please check your browser settings.";
+                } else {
+                    errorMessage += 'Hubo un error con el reconocimiento de voz. Inténtalo de nuevo.';
+                    speakMsg = "There was an error with voice recognition. Please try again.";
+                }
+                aiResponseDiv.textContent = errorMessage;
+                speakPhrase(speakMsg, 'en-US');
+                playSound('incorrect');
+                voiceButton.classList.remove('recording');
+                voiceButton.disabled = false;
+                textButton.disabled = false;
+                voiceButton.innerHTML = '<span class="icon">🎤</span> Hablar con Sparky';
+            }
+            
+            recognition.onend = function() {
+                // El botón se reactivará en el finally de askGemini
+            }
+
+            try {
+                recognition.start();
+            } catch(e) {
+                const errorMsg = "Sparky dice: Error al iniciar la grabación. Intenta recargar la página.";
+                aiResponseDiv.textContent = errorMsg;
+                speakPhrase("Error starting the recording. Please try reloading the page.", 'en-US');
+                voiceButton.classList.remove('recording');
+                voiceButton.disabled = false;
+                textButton.disabled = false;
+                voiceButton.innerHTML = '<span class="icon">🎤</span> Hablar con Sparky';
+            }
+        }
+
+
+        async function askGemini() {
+            const userInput = document.getElementById('aiUserInput').value;
+            const aiResponseDiv = document.getElementById('aiResponse');
+            const voiceButton = document.getElementById('sparky-voice-btn');
+            const textButton = document.querySelector('#section-aiChat .send-text-btn');
+
+            if (!aiResponseDiv || !voiceButton || !textButton) return;
+
+            if (GEMINI_API_KEY === "TU_API_KEY_DE_GEMINI_AQUI" || !GEMINI_API_KEY) {
+                const errorMsg = "Sparky dice: Para poder conversar, mi creador necesita poner una 'API Key' secreta. ¡Pídele que la revise!";
+                aiResponseDiv.textContent = errorMsg;
+                speakPhrase("Sparky dice: Para poder conversar, mi creador necesita poner una API Key secreta. ¡Pídele que la revise!", 'es-VE');
+                return;
+            }
+
+            if (!userInput.trim()) {
+                const helpMsg = "Sparky dice: ¡Hola! Haz clic en 'Hablar con Sparky' y dime algo, o escribe un mensaje y presiona 'Enviar Texto'.";
+                aiResponseDiv.textContent = helpMsg;
+                speakPhrase("Hello! Click 'Hablar con Sparky' and tell me something, or type a message and press 'Enviar Texto'.", 'en-US');
+                return;
+            }
+            
+            voiceButton.disabled = true;
+            textButton.disabled = true;
+            voiceButton.innerHTML = '<span class="icon">⏳</span> Pensando...';
+            aiResponseDiv.textContent = "Sparky está procesando tu mensaje...";
+            
+             const prompt = `Eres "Sparky", un asistente de IA super amigable, divertido, paciente y alentador, especialmente para un estudiante de Venezuela que está en su primer contacto con el inglés (nivel A1). El estudiante está aprendiendo a presentarse ("Hi, I'm [name]", "I'm from [country/city]", "Nice to meet you"), el alfabeto, y algunos pronombres/posesivos básicos (my, your, his, her, I, you, he, she, it, we, they, its, our, their) y vocabulario básico (name, computer, librarian, materials, pajamas, grammar, veterinary, international, zoo, last name).
+
+            El estudiante te dice: "${userInput}"
+
+            Tu respuesta DEBE ser:
+            1. En INGLÉS MUY SENCILLO Y CLARO (A1, frases cortas y directas, vocabulario simple de la lección).
+            2. Extremadamente positivo y motivador. Usa palabras de ánimo. No uses emojis en tu respuesta.
+            3. Si el estudiante se presenta con su nombre (Ej: "Hi, I'm Pedro" o "My name is Ana"): "Hey ${userInput.split(" ").pop().replace(/[.]/g, "")}! So cool to meet you! Your name sounds awesome! I'm Sparky, your AI buddy for English! Where in beautiful Venezuela are you from?" (Extrae el nombre del input).
+            4. Si el estudiante dice de dónde es (ej. "I'm from Caracas" o "I am from Venezuela"): "Caracas! Wow, that's amazing! Venezuela is a beautiful country! So, nice to meet you!".
+            5. Si te pregunta tu nombre ("What's your name?", "Who are you?"): "You can call me Sparky! Your super friendly English helper! What's your name?"
+            6. Si deletrea algo o pregunta sobre letras: "Great spelling! You're a star at the alphabet! Keep practicing those letters! You can spell anything!". Ofrécete a deletrear una palabra simple para él/ella si parece apropiado, como "How about I spell 'cat' for you? C-A-T. Your turn!".
+            7. Si dice algo no relacionado directamente con la lección (presentaciones, alfabeto, de dónde es, vocabulario de la lección): "That's super interesting! For this first lesson, we are focusing on introductions like 'Hi, I'm...' and 'I'm from...'. Want to try introducing yourself to me? You can say: Hi Sparky, I'm [your name]!".
+            8. Mantén las respuestas cortas y dulces (1-3 frases máximo).
+            9. **ABSOLUTAMENTE NADA DE ESPAÑOL EN TU RESPUESTA.** Solo inglés.
+            10. Si el input del usuario es muy corto, confuso, o un simple "hello" o "hi": "Hey there! I'm Sparky, your English pal! What's your name? And where are you from? Let's practice our introductions!"
+            11. Si el estudiante expresa frustración o dice "no entiendo", "I don't understand", "no puedo": "Hey, it's totally okay! Learning a new language is a journey, not a race. We can go slow. What part is tricky? Or we can try a simple phrase again, like 'Hi, I'm [your name]'. You're doing great just by trying!"
+            12. Si el estudiante solo escribe una palabra clave de la lección como "computer", "name", "pajamas": "Yes, '${userInput}' is a cool word we learned! Can you try to use it in a sentence? For example: 'My name is...' or 'I like my new pajamas.' You can do it!"
+            13. Si el estudiante pregunta sobre los pronombres o posesivos (ej. "what is his?", "qué es 'my'"): "Good question! '${userInput.split(' ').pop().replace(/[?¿]/g,'').trim()}' is a word we use to show who something belongs to or who is doing something. For example, 'My name is Sparky' means the name belongs to me! Keep asking, that's how we learn!"
+            14. Si el estudiante usa una frase clave correctamente, como "Nice to meet you", respóndele apropiadamente: "Nice to meet you too! You're doing great!"
+            
+            Asegúrate de que tus respuestas sean coherentes con el contexto de un estudiante principiante. No antepongas "Sparky dice:" a tu respuesta, la interfaz ya lo hace.
+            `;
+
+            try {
+                const response = await fetch(GEMINI_API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: prompt }] }],
+                        generationConfig: { temperature: 0.75, maxOutputTokens: 180 }
+                    }),
+                });
+
+                const responseBody = await response.text();
+
+                if (!response.ok) {
+                    console.error("Error de Gemini API - Status:", response.status, "Body:", responseBody);
+                    let errorMsg = `Sparky dice: ¡Oh no! Algo no funcionó con mi cerebro IA (Error ${response.status}). Intenta de nuevo, por favor.`;
+                    try {
+                        const errData = JSON.parse(responseBody);
+                        if (errData && errData.error && errData.error.message) {
+                            errorMsg += ` Detalle: ${errData.error.message.substring(0,100)}...`;
+                        }
+                    } catch (e) { /* no hacer nada si no es JSON */ }
+                    
+                    aiResponseDiv.textContent = errorMsg;
+                    speakPhrase("Oh no! Something went wrong with the AI. Please try again.", 'en-US');
+                    playSound('incorrect');
+                    return;
+                }
+
+                const data = JSON.parse(responseBody);
+                
+                if (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts && data.candidates[0].content.parts[0] && data.candidates[0].content.parts[0].text) {
+                    let aiText = data.candidates[0].content.parts[0].text.trim();
+                    aiResponseDiv.textContent = "Sparky dice: " + aiText;
+                    speakPhrase(aiText, 'en-US'); 
+                } else if (data.candidates && data.candidates[0] && data.candidates[0].finishReason) {
+                     let reason = data.candidates[0].finishReason;
+                     let friendlyMessage = "Mmm, mi cerebro IA tuvo un pequeño hipo. ";
+                     let speakableMessage = "";
+                     if (reason === "SAFETY") {
+                         friendlyMessage += "Mi filtro de seguridad se activó. ¿Podemos probar con otra frase?";
+                         speakableMessage = "My safety filter was activated. Can we try another sentence?";
+                     } else {
+                         friendlyMessage += "¿Podrías intentarlo de nuevo o reformular tu pregunta?";
+                         speakableMessage = "Could you try again or ask your question in a different way?";
+                     }
+                    aiResponseDiv.textContent = "Sparky dice: " + friendlyMessage;
+                    speakPhrase(speakableMessage, 'en-US');
+                    console.warn("Respuesta de Gemini con finishReason:", reason, data);
+                    playSound('incorrect');
+                }
+                else {
+                    const errorMsg = "Mmm, mi cerebro IA tuvo un pequeño cortocircuito y no pudo generar una respuesta clara. ¿Podrías intentarlo de nuevo?";
+                    aiResponseDiv.textContent = "Sparky dice: " + errorMsg;
+                    speakPhrase("Hmm, my AI brain had a little glitch. Could you try that again?", 'en-US');
+                    console.warn("Respuesta inesperada o vacía de Gemini:", data);
+                    playSound('incorrect');
+                }
+
+            } catch (error) {
+                console.error("Error al contactar Gemini API:", error);
+                const errorMsg = "¡Rayos! No pude conectar. Revisa tu internet o la llave mágica (API Key). Error: " + error.message;
+                aiResponseDiv.textContent = "Sparky dice: " + errorMsg;
+                speakPhrase("Oops! I couldn't connect. Check your internet or the magic API Key.", 'en-US');
+                playSound('incorrect');
+            } finally {
+                if (voiceButton && textButton) {
+                    voiceButton.classList.remove('recording');
+                    voiceButton.disabled = false;
+                    textButton.disabled = false;
+                    voiceButton.innerHTML = '<span class="icon">🎤</span> Hablar con Sparky';
+                }
+            }
+        }
+        
+        // ======================================================================
+        // ======================== FIN DE CÓDIGO MODIFICADO ========================
+        // ======================================================================
+
+        function restartLesson() {
+            hideCompletionModal();
+            if (synth && synth.speaking) synth.cancel();
+            activeUtterance = null;
+            completedSteps.clear();
+            
+            document.querySelectorAll('.feedback:not(#aiResponse)').forEach(el => { el.innerHTML = ''; el.style.display = 'none';});
+            document.querySelectorAll('.explanation').forEach(el => { el.style.display = 'none'; el.innerHTML = '';});
+
+            const userPres = document.getElementById('userPresentation');
+            if (userPres) userPres.value = '';
+            
+            const aiInput = document.getElementById('aiUserInput');
+            if (aiInput) aiInput.value = '';
+            const aiResp = document.getElementById('aiResponse');
+            if (aiResp) aiResp.textContent = 'Sparky está listo para charlar...';
+
+
+            ['grammar_q1', 'grammar_q2', 'grammar_q3'].forEach(id => {
+                const input = document.getElementById(id);
+                if (input) { input.value = ''; input.style.borderColor = 'var(--gris-medio)'; }
+            });
+
+            ['quizContainer', 'roseQuizContainer'].forEach(id => {
+                 const container = document.getElementById(id);
+                 if (container) {
+                    container.innerHTML = ''; 
+                    if (id === 'quizContainer') displayQuiz();
+                    if (id === 'roseQuizContainer') displayRoseQuiz();
+                 }
+            });
+            
+            document.querySelectorAll('.fill-in-blank-input').forEach(input => {
+                input.value = '';
+                input.style.borderColor = 'var(--electric-mint)';
+                input.style.backgroundColor = '#F0FFFF';
+                if(input.dataset.placeholder) input.placeholder = input.dataset.placeholder;
+            });
+            const fillInFeedback = document.getElementById('fillInFeedback');
+            if(fillInFeedback) fillInFeedback.style.display = 'none';
+
+            if (sidebarMenuEl) {
+                sidebarMenuEl.querySelectorAll('a .completed-check').forEach(check => check.remove());
+                sidebarMenuEl.querySelectorAll('a.step-completed').forEach(link => link.classList.remove('step-completed'));
+            }
+
+            document.querySelectorAll('.mark-completed-btn').forEach(btn => {
+                btn.classList.remove('completed');
+                btn.disabled = false;
+                const iconSpan = btn.querySelector('.icon');
+                let originalText = "Marcar como completado"; 
+                const buttonTexts = {
+                    "completeStep1Btn": "Completé Escucha",
+                    "completeGrammarPersonalBtn": "Entendí Pronombres y Posesivos",
+                    "completeVocabAlphabetBtn": "Practiqué el Alfabeto",
+                    "completeVocabWordsBtn": "Repasé Palabras Nuevas",
+                    "completeStep2Btn": "Completé Práctica Oral",
+                    "completeReadingBtn": "Entendí la Historia",
+                    "completeListeningPracticeBtn": "Completé Desafío Auditivo",
+                    "completeAIChatBtn": "Completé Charla IA"
+                };
+                originalText = buttonTexts[btn.id] || originalText;
+                btn.innerHTML = (iconSpan ? iconSpan.outerHTML : '') + " " + originalText;
+            });
+
+            document.querySelectorAll('button.record-btn').forEach(btn => {
+                btn.classList.remove('recording');
+                 if (recognition) {
+                    btn.disabled = false;
+                    btn.innerHTML = '<span class="icon">🎤</span> Grabar Ahora';
+                     if (btn.id === 'recordAlphabetBtn') btn.innerHTML = '<span class="icon">🎤</span> Grabar Mi Deletreo';
+
+                } else {
+                    btn.disabled = true;
+                    btn.innerHTML = '<span class="icon">🚫</span> Grab. No Disp.';
+                }
+            });
+             const alphabetRecordFeedback = document.getElementById('recordFeedbackAlphabet');
+             if (alphabetRecordFeedback) alphabetRecordFeedback.style.display = 'none';
+            
+            const steps = document.querySelectorAll('.lesson-step');
+            steps.forEach((step, index) => {
+                step.style.opacity = '0';
+                step.style.animation = 'none';
+                void step.offsetWidth; 
+                step.style.animation = `fadeIn 0.5s ease-out ${index * 0.08 + 0.1}s forwards`;
+            });
+            
+            // Restaurar placeholders de fill-in-blanks
+            const q1v = document.getElementById('q1_v'); if(q1v) q1v.placeholder = '_____';
+            const q2v = document.getElementById('q2_v'); if(q2v) q2v.placeholder = '___';
+            const q3v = document.getElementById('q3_v'); if(q3v) q3v.placeholder = '_____';
+            const q4v = document.getElementById('q4_v'); if(q4v) q4v.placeholder = '____';
+            const q5v = document.getElementById('q5_v'); if(q5v) q5v.placeholder = '____';
+            
+            // Restaurar placeholders de gramática
+            const gq1 = document.getElementById('grammar_q1'); if(gq1) gq1.placeholder = '___';
+            const gq2 = document.getElementById('grammar_q2'); if(gq2) gq2.placeholder = '___';
+            const gq3 = document.getElementById('grammar_q3'); if(gq3) gq3.placeholder = '___';
+
+
+            updateProgressBar();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            if (lessonSections.length > 0) {
+                updateActiveMenuItemDOM(lessonSections[0].id);
+            }
+            speakPhrase("¡Claro que sí! Empecemos de nuevo la Lección 1. ¡Esta vez será aún mejor!", 'es-VE');
+            
+            if (isMobileMenuOpen && lessonSidebarGlobalEl) {
+                lessonSidebarGlobalEl.classList.remove('active');
+                if(overlayEl) overlayEl.style.display = 'none';
+                isMobileMenuOpen = false;
+            }
+        }
+        
+        function playWelcomeMessage() {
+             let welcomeMessage = "Hello and welcome to SmartClass, Lesson 1! Let's learn how to introduce yourself in English. It's going to be super fun and easy!";
+             speakPhrase("¡Hola! Bienvenido a SmartClass. Lección uno: ¡A presentarse! Vamos a aprender inglés juntos. ¡Será muy divertido y fácil!", 'es-VE', () => {
+                 if(!isSpeaking && synth && !synth.speaking) { 
+                     speakPhrase(welcomeMessage, 'en-US');
+                 }
+             });
+        }
+        
+        function showCompletionModal() {
+            if (completedSteps.size < totalInteractiveSteps) {
+                const message = '¡Ánimo! Aún te faltan algunos pasos para completar la misión. ¡Tú puedes!';
+                speakPhrase(message, 'es-VE');
+                alert(message);
+                
+                // Find and scroll to the first incomplete step
+                for (const stepId of trackableStepIds) {
+                    if (!completedSteps.has(stepId)) {
+                        const sectionId = `section-${stepId.replace('_auto','')}`;
+                        scrollToSection(sectionId);
+                        break;
+                    }
+                }
+            } else {
+                completionOverlayEl.style.display = 'flex';
+                playSound('tada');
+                speakPhrase("Mission Completed! Congratulations!", 'en-US');
+            }
+        }
+        
+        function hideCompletionModal() {
+            completionOverlayEl.style.display = 'none';
+            // Opcional: reiniciar la lección al cerrar el modal
+            // restartLesson(); 
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            appHeaderEl = document.getElementById('appHeader');
+            lessonSidebarGlobalEl = document.getElementById('lessonSidebar');
+            overlayEl = document.getElementById('mobileMenuOverlay');
+            progressBarSidebarEl = document.getElementById('progressBarSidebar');
+            progressTextSidebarEl = document.getElementById('progressTextSidebar');
+            completionOverlayEl = document.getElementById('completionOverlay');
+            contentAreaEl = document.getElementById('contentArea');
+            sidebarMenuEl = document.getElementById('lessonSectionsMenu');
+
+            initializeSpeechAPI();
+
+            const initAppVisualsAndContent = () => {
+                if (appInitialized) return; 
+                appInitialized = true;
+
+                updateLayoutAndScroll(); 
+                window.addEventListener('resize', () => {
+                    updateLayoutAndScroll();
+                    setupIntersectionObserver();
+                });
+                window.addEventListener('scroll', () => { 
+                    if (intersectionObserver && appInitialized) {
+                        // El observer ya está configurado para llamar a updateActiveMenuItemDOM
+                    }
+                }, { passive: true });
+
+                populateSidebar(); 
+                displayQuiz();       
+                generateVisualAlphabet();
+                displayLessonVocabulary();
+                displayRoseStory();
+                displayRoseQuiz();
+            
+                document.querySelectorAll('.fill-in-blank-input').forEach(input => {
+                    input.dataset.placeholder = input.placeholder;
+                });
+
+                updateProgressBar();
+
+                const steps = document.querySelectorAll('.lesson-step');
+                steps.forEach((step, index) => {
+                    step.style.animationDelay = `${index * 0.05 + 0.1}s`;
+                    void step.offsetWidth;
+                    step.style.animationPlayState = 'running';
+                });
+            
+                 if (lessonSections.length > 0) {
+                    const initialSectionId = window.location.hash ? window.location.hash.substring(1) : lessonSections[0].id;
+                    const sectionElement = document.getElementById(initialSectionId);
+                    
+                    if (sectionElement && lessonSections.some(s => s.id === initialSectionId)) {
+                        if (window.location.hash) { 
+                             setTimeout(() => { 
+                                updateActiveMenuItemDOM(initialSectionId);
+                                const rect = sectionElement.getBoundingClientRect();
+                                if (rect.top < getHeaderActualHeight()) {
+                                    scrollToSection(initialSectionId); 
+                                }
+                            }, 100);
+                        } else { 
+                            window.scrollTo(0,0);
+                            updateActiveMenuItemDOM(lessonSections[0].id);
+                        }
+                    } else if (lessonSections.length > 0) { 
+                        window.scrollTo(0,0);
+                        updateActiveMenuItemDOM(lessonSections[0].id);
+                    }
+                }
+                
+                if (initialWelcomePending) { 
+                    playWelcomeMessage();
+                    initialWelcomePending = false;
+                }
+
+                const aiSendButton = document.querySelector('#section-aiChat .send-text-btn');
+                if(aiSendButton) aiSendButton.innerHTML = '<span class="icon" style="font-size: 1.1em;">✉️</span> Enviar Texto';
+
+                // Event listener for the completion modal
+                completionOverlayEl.addEventListener('click', (e) => {
+                    if (e.target.id === 'completionOverlay' || e.target.tagName === 'BUTTON') {
+                        hideCompletionModal();
+                    }
+                });
+
+            };
+            
+            let voiceLoadAttempts = 0;
+            const maxVoiceLoadAttempts = 20; 
+            function tryInitWhenVoicesReady() {
+                voiceLoadAttempts++;
+                if (synth.getVoices().length > 0) {
+                    getAndSetVoices();
+                    initAppVisualsAndContent();
+                } else if (voiceLoadAttempts < maxVoiceLoadAttempts) {
+                    setTimeout(tryInitWhenVoicesReady, 150);
+                } else {
+                    console.warn("SmartClass: No se pudieron cargar las voces de síntesis. La funcionalidad de audio puede ser limitada.");
+                    initAppVisualsAndContent(); 
+                }
+            }
+
+            if (typeof synth.onvoiceschanged === "function") {
+                 synth.onvoiceschanged = () => {
+                    if (!appInitialized && synth.getVoices().length > 0) {
+                        getAndSetVoices();
+                        initAppVisualsAndContent(); 
+                        synth.onvoiceschanged = null; 
+                    }
+                 };
+                 setTimeout(tryInitWhenVoicesReady, 50); 
+            } else {
+                tryInitWhenVoicesReady();
+            }
+        });
+    </script>
+</body>
+</html>
